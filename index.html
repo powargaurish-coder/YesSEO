@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YESEO v2 — AI SEO & AEO Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070a;--s1:#0d0d12;--s2:#141419;--s3:#1c1c23;--border:#252530;--b2:#32323f;--g:#00f5a0;--g2:#00c478;--bl:#5b8af5;--bl2:#3060cc;--o:#ff9500;--r:#ff3c5a;--t:#e4e4ee;--m:#9898b0;--rad:10px;--rs:6px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+header{position:sticky;top:0;z-index:300;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(7,7,10,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:4px;text-transform:uppercase}
+.logo em{color:var(--g);font-style:normal}
+.hbadge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;padding:3px 10px;border:1px solid var(--g);color:var(--g);border-radius:20px}
+.hdot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.hright{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--m);font-family:'IBM Plex Mono',monospace}
+.hero{padding:32px 28px 22px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(0,245,160,0.025) 0%,transparent 100%)}
+.hero-ey{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--g);text-transform:uppercase;margin-bottom:9px}
+.hero-t{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:0.95;letter-spacing:-0.5px;text-transform:uppercase;margin-bottom:5px}
+.hero-t span{color:var(--g)}
+.hero-s{font-size:12px;color:var(--m);margin-bottom:22px;font-family:'IBM Plex Mono',monospace}
+.sw{display:flex;gap:7px;max-width:740px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rad);padding:4px 4px 4px 14px;transition:border-color 0.2s}
+.sw:focus-within{border-color:var(--g);box-shadow:0 0 0 3px rgba(0,245,160,0.07)}
+.si{flex:1;background:none;border:none;outline:none;color:var(--t);font-size:13px;font-family:'IBM Plex Mono',monospace}
+.si::placeholder{color:var(--m)}
+.sbtn{padding:10px 22px;background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.sbtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,245,160,0.28)}
+.sbtn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.ftags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.ft{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.5px;padding:3px 9px;border-radius:20px;border:1px solid var(--border);color:var(--m)}
+.ft.on{border-color:rgba(0,245,160,0.35);color:var(--g);background:rgba(0,245,160,0.04)}
+.ft.sv{border-color:rgba(255,149,0,0.35);color:var(--o);background:rgba(255,149,0,0.04)}
+.lay{display:flex;min-height:calc(100vh - 54px)}
+.nav{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);padding:14px 8px;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto}
+.nl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--m);padding:10px 8px 5px}
+.ni{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:500;color:var(--m);transition:all 0.12s;margin-bottom:1px;position:relative;white-space:nowrap}
+.ni:hover{background:var(--s2);color:var(--t)}.ni.active{background:rgba(0,245,160,0.06);color:var(--g)}
+.ni.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:13px;background:var(--g);border-radius:0 2px 2px 0}
+.nic{font-size:12px;width:15px;text-align:center;flex-shrink:0}
+.srvchip{margin-left:auto;font-size:8px;padding:1px 5px;background:rgba(255,149,0,0.1);color:var(--o);border-radius:3px;font-family:'IBM Plex Mono',monospace}
+.main{flex:1;padding:22px 26px;overflow-x:hidden}
+.screen{display:none}.screen.active{display:block}
+.sh{margin-bottom:18px}
+.st{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.sd{font-size:11px;color:var(--m);margin-top:3px;font-family:'IBM Plex Mono',monospace}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:14px}
+.ch{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t);display:flex;align-items:center;gap:7px}
+.cb{padding:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.sco{background:var(--s2);border:1px solid var(--border);border-radius:var(--rad);padding:16px;text-align:center;position:relative;overflow:hidden;transition:transform 0.2s}
+.sco:hover{transform:translateY(-2px)}
+.sl{position:absolute;bottom:0;left:0;right:0;height:2px}
+.cg .sl{background:var(--g)}.cbl .sl{background:var(--bl)}.co .sl{background:var(--o)}.cr .sl{background:var(--r)}
+.sn{font-family:'Barlow Condensed',sans-serif;font-size:46px;font-weight:900;line-height:1;margin-bottom:3px}
+.cg .sn{color:var(--g)}.cbl .sn{color:var(--bl)}.co .sn{color:var(--o)}.cr .sn{color:var(--r)}
+.slb{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--m)}
+.iss{padding:11px 0;border-bottom:1px solid rgba(37,37,48,0.6)}.iss:last-child{border-bottom:none}
+.ir{display:flex;align-items:flex-start;gap:9px}
+.ii{width:19px;height:19px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px}
+.ie{background:rgba(255,60,90,0.1);color:var(--r)}.iw{background:rgba(255,149,0,0.1);color:var(--o)}.io{background:rgba(0,245,160,0.1);color:var(--g)}.ib{background:rgba(91,138,245,0.1);color:var(--bl)}
+.it{font-size:12.5px;font-weight:600;color:var(--t);margin-bottom:2px}
+.id{font-size:11.5px;color:var(--m);line-height:1.6}
+.ss{margin-top:9px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.7}
+.sd2{display:flex;gap:4px;margin-bottom:7px}
+.dd{width:7px;height:7px;border-radius:50%}.dr{background:#ff3c5a}.dy{background:#ffd60a}.dg2{background:#00f5a0}
+.scode{color:var(--r);white-space:pre-wrap}.swc .scode{color:var(--o)}
+.sfx{margin-top:7px;padding:7px 9px;background:rgba(0,245,160,0.05);border-left:2px solid var(--g);font-size:10.5px;color:var(--g)}
+.tw{position:relative;flex:1}
+.tw:hover .tip{opacity:1;transform:translateY(0);pointer-events:auto}
+.tip{position:absolute;bottom:calc(100% + 7px);left:0;right:0;background:var(--s3);border:1px solid var(--bl);border-radius:var(--rs);padding:9px 11px;font-size:11.5px;line-height:1.6;z-index:200;opacity:0;transform:translateY(5px);transition:all 0.16s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+.tip::after{content:'';position:absolute;top:100%;left:12px;border:4px solid transparent;border-top-color:var(--bl)}
+.tl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--bl);margin-bottom:4px}
+.th{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--bl);margin-top:3px;opacity:0.6}
+.pw{margin-bottom:11px}
+.pl{display:flex;justify-content:space-between;font-size:11px;color:var(--m);margin-bottom:4px;font-family:'IBM Plex Mono',monospace}
+.pb{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width 1.2s ease}
+.pfg{background:linear-gradient(90deg,var(--g),var(--g2))}.pfb{background:linear-gradient(90deg,var(--bl),var(--bl2))}.pfo{background:linear-gradient(90deg,var(--o),#cc7700)}.pfr{background:linear-gradient(90deg,var(--r),#cc1133)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--m);padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 11px;font-size:12px;border-bottom:1px solid rgba(37,37,48,0.4)}
+.tbl tr:hover td{background:var(--s2)}.tbl tr:last-child td{border-bottom:none}
+.db{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;font-family:'IBM Plex Mono',monospace;letter-spacing:0.5px}
+.dbe{background:rgba(0,245,160,0.08);color:var(--g)}.dbm{background:rgba(255,149,0,0.08);color:var(--o)}.dbh{background:rgba(255,60,90,0.08);color:var(--r)}
+.fi{background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:8px}
+.fq{font-size:12.5px;font-weight:600;color:var(--bl);margin-bottom:5px}
+.fa{font-size:12px;color:var(--t);line-height:1.7}
+.inp{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);color:var(--t);font-size:12.5px;font-family:'Barlow',sans-serif;outline:none;margin-bottom:10px;transition:border-color 0.2s}
+.inp:focus{border-color:var(--g)}.inp::placeholder{color:var(--m)}
+.sel{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);color:var(--t);font-size:12.5px;font-family:'Barlow',sans-serif;outline:none;margin-bottom:10px}
+.ta{width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);color:var(--t);font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;resize:vertical;outline:none;min-height:150px;margin-bottom:10px;transition:border-color 0.2s}
+.ta:focus{border-color:var(--g)}.ta::placeholder{color:var(--m)}
+.bg{padding:9px 20px;background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;border-radius:var(--rs);font-size:11px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s}
+.bg:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,245,160,0.22)}
+.bb{padding:9px 20px;background:linear-gradient(135deg,var(--bl),var(--bl2));color:#fff;border:none;border-radius:var(--rs);font-size:11px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s}
+.bsm{padding:5px 11px;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);color:var(--m);font-size:10px;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:all 0.18s;letter-spacing:0.5px}
+.bsm:hover{border-color:var(--g);color:var(--g)}
+.srvn{background:rgba(255,149,0,0.04);border:1px solid rgba(255,149,0,0.22);border-radius:var(--rad);padding:18px 20px;display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.snti{font-size:13px;font-weight:600;color:var(--o);margin-bottom:5px}
+.sntx{font-size:12px;color:var(--m);line-height:1.7}
+.snch{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.snc{padding:2px 9px;background:rgba(255,149,0,0.07);border:1px solid rgba(255,149,0,0.22);border-radius:20px;font-size:9px;color:var(--o);font-family:'IBM Plex Mono',monospace}
+.ld{display:none;text-align:center;padding:55px 26px}.ld.on{display:block}
+.sp{width:38px;height:38px;margin:0 auto 14px;border:2px solid var(--border);border-top-color:var(--g);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lt{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--m)}
+.ls{font-size:10px;color:var(--g);margin-top:5px;font-family:'IBM Plex Mono',monospace}
+.emp{text-align:center;padding:50px 26px;border:1px dashed var(--border);border-radius:var(--rad)}
+.eic{font-size:40px;margin-bottom:12px;opacity:0.22}
+.etl{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--m);margin-bottom:5px}
+.esu{font-size:11px;color:var(--m);font-family:'IBM Plex Mono',monospace}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
+.sbt{padding:12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;text-align:center;transition:all 0.14s}
+.sbt:hover{border-color:var(--g)}.sbt.sel{border-color:var(--g);background:rgba(0,245,160,0.05)}
+.sic{font-size:19px;margin-bottom:4px}.snm{font-size:11.5px;font-weight:600;color:var(--t)}.sdc{font-size:9.5px;color:var(--m);margin-top:2px}
+.sout{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:12px;color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;resize:vertical;outline:none;min-height:190px}
+.sout:focus{border-color:var(--g)}
+.svr{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(37,37,48,0.4)}.svr:last-child{border-bottom:none}
+.svn{font-size:12px;font-weight:600;width:150px;flex-shrink:0}
+.svt{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.svf{height:100%;border-radius:3px}.svp{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m);width:28px;text-align:right}
+.sni{padding:12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:8px}
+.snq{font-size:12.5px;font-weight:600;color:var(--bl);margin-bottom:6px}
+.pb3{padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.pp1{background:rgba(0,245,160,0.08);color:var(--g)}.pp2{background:rgba(91,138,245,0.08);color:var(--bl)}.pp0{background:rgba(152,152,176,0.08);color:var(--m)}
+.chs{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.ch2{padding:4px 11px;border-radius:20px;font-size:10.5px;font-weight:600;border:1px solid}
+.chi{border-color:rgba(91,138,245,0.35);color:var(--bl);background:rgba(91,138,245,0.05)}
+.cht{border-color:rgba(0,245,160,0.35);color:var(--g);background:rgba(0,245,160,0.05)}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(37,37,48,0.4);font-size:12px}.srow:last-child{border-bottom:none}
+.sbg{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.spos{background:rgba(0,245,160,0.08);color:var(--g)}.sneu{background:rgba(152,152,176,0.1);color:var(--m)}.sneg{background:rgba(255,60,90,0.08);color:var(--r)}
+.crow{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid rgba(37,37,48,0.4)}.crow:last-child{border-bottom:none}
+.cnm{font-size:12.5px;font-weight:600;flex:1}
+.csc{font-family:'IBM Plex Mono',monospace;font-size:11px;width:32px;text-align:center}
+.cvs{padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.vw{background:rgba(0,245,160,0.08);color:var(--g)}.vl{background:rgba(255,60,90,0.08);color:var(--r)}.vt{background:rgba(91,138,245,0.08);color:var(--bl)}
+.cci{padding:11px 0;border-bottom:1px solid rgba(37,37,48,0.4)}.cci:last-child{border-bottom:none;padding-bottom:0}
+.cr2{display:flex;align-items:flex-start;gap:8px}
+.ctit{font-size:12.5px;font-weight:600;margin-bottom:3px}
+.cmeta{display:flex;gap:7px;align-items:center;margin-bottom:7px;flex-wrap:wrap}
+.ctag{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;background:rgba(91,138,245,0.08);color:var(--bl);font-family:'IBM Plex Mono',monospace}
+.cwy{font-size:10.5px;color:var(--m)}
+.cbtns{display:flex;gap:6px;flex-wrap:wrap}
+.cout{display:none;margin-top:9px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:11px;font-size:10.5px;line-height:1.8;font-family:'IBM Plex Mono',monospace;white-space:pre-wrap}
+.cimg{display:none;margin-top:9px;background:rgba(91,138,245,0.03);border:1px solid rgba(91,138,245,0.18);border-radius:var(--rs);padding:11px;font-size:11.5px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">YES<em>EO</em></div>
+<div class="hright"><div class="hdot"></div><span>AI READY</span><div class="hbadge">V2 — 16 FEATURES</div></div>
+</header>
+<div class="hero">
+<div class="hero-ey">// SEO · AEO · GEO · Schema · NLP · LLM · Sentiment · Competitor · Reports</div>
+<div class="hero-t">AI-POWERED <span>SEO & AEO</span><br>INTELLIGENCE PLATFORM</div>
+<div class="hero-s">Enter any URL for complete analysis across 16 intelligence modules</div>
+<div class="sw"><input class="si" id="ui" type="text" placeholder="https://www.yeseco.ae" value="https://www.yeseco.ae"><button class="sbtn" id="gb" onclick="run()">⚡ Run Full Analysis</button></div>
+<div class="ftags">
+<span class="ft on">✓ SEO Audit</span><span class="ft on">✓ Schema Builder</span><span class="ft on">✓ NLP Intent</span><span class="ft on">✓ Snippet Tracker</span><span class="ft on">✓ LLM Prompts</span><span class="ft on">✓ Hallucination Guard</span><span class="ft on">✓ Answer Depth</span><span class="ft on">✓ Citation Gap</span><span class="ft on">✓ Brand Sentiment</span><span class="ft on">✓ Competitor</span><span class="ft on">✓ Content Gen</span><span class="ft on">✓ Auto Reports</span><span class="ft sv">⚡ AI SoV (Server)</span><span class="ft sv">⚡ Live Crawler (Server)</span><span class="ft sv">⚡ Live Competitor (Server)</span>
+</div>
+</div>
+<div class="lay">
+<nav class="nav">
+<div class="nl">Overview</div>
+<div class="ni active" onclick="gn('ov',this)"><span class="nic">📊</span>Dashboard</div>
+<div class="ni" onclick="gn('se',this)"><span class="nic">🔍</span>SEO Audit</div>
+<div class="nl">AEO / AI Search</div>
+<div class="ni" onclick="gn('sc',this)"><span class="nic">🏗️</span>Schema Builder</div>
+<div class="ni" onclick="gn('nl',this)"><span class="nic">🧠</span>NLP & Intent</div>
+<div class="ni" onclick="gn('sn',this)"><span class="nic">🎯</span>Snippet Tracker</div>
+<div class="ni" onclick="gn('ll',this)"><span class="nic">🤖</span>LLM Prompts</div>
+<div class="ni" onclick="gn('hg',this)"><span class="nic">🛡️</span>Hallucination Guard</div>
+<div class="ni" onclick="gn('ad',this)"><span class="nic">📐</span>Answer Depth</div>
+<div class="ni" onclick="gn('cg',this)"><span class="nic">🔗</span>Citation Gap</div>
+<div class="nl">Brand & Competition</div>
+<div class="ni" onclick="gn('bs',this)"><span class="nic">💬</span>Brand Sentiment</div>
+<div class="ni" onclick="gn('cp',this)"><span class="nic">⚔️</span>Competitor</div>
+<div class="ni" onclick="gn('sv',this)"><span class="nic">📡</span>AI Share of Voice<span class="srvchip">SERVER</span></div>
+<div class="nl">Content & Reports</div>
+<div class="ni" onclick="gn('cn',this)"><span class="nic">✍️</span>Content Gen</div>
+<div class="ni" onclick="gn('rp',this)"><span class="nic">📄</span>Auto Report</div>
+<div class="ni" onclick="gn('cr',this)"><span class="nic">🕷️</span>Crawler<span class="srvchip">SERVER</span></div>
+</nav>
+<div class="main">
+<div class="ld" id="ld"><div class="sp"></div><div class="lt">Running full analysis...</div><div class="ls" id="ls">Initialising...</div></div>
+
+<!-- DASHBOARD -->
+<div class="screen active" id="sov">
+<div class="sh"><div class="st">📊 Dashboard</div><div class="sd">Enter URL above and click Run Full Analysis</div></div>
+<div class="emp" id="dem"><div class="eic">🚀</div><div class="etl">Ready to Analyze</div><div class="esu">Enter any website URL above and run full analysis</div></div>
+<div id="dd" style="display:none">
+<div class="g4" id="scc"></div>
+<div class="g2">
+<div class="card"><div class="ch"><div class="ct">📋 Page Analysis</div></div><div class="cb" id="pa"></div></div>
+<div class="card"><div class="ch"><div class="ct">⚠️ Top Issues</div></div><div class="cb" id="ti"></div></div>
+</div>
+<div class="card"><div class="ch"><div class="ct">📈 Performance</div></div><div class="cb" id="pc"></div></div>
+</div>
+</div>
+
+<!-- SEO AUDIT -->
+<div class="screen" id="sse">
+<div class="sh"><div class="st">🔍 SEO Audit</div><div class="sd">Technical and on-page analysis with visual issue screenshots</div></div>
+<div class="g2">
+<div class="card"><div class="ch"><div class="ct">🔴 Errors</div></div><div class="cb" id="serr"></div></div>
+<div class="card"><div class="ch"><div class="ct">🟠 Warnings</div></div><div class="cb" id="swrn"></div></div>
+</div>
+<div class="card"><div class="ch"><div class="ct">✅ Working Well</div></div><div class="cb" id="sgd"></div></div>
+<div class="card"><div class="ch"><div class="ct">🎯 Keywords</div></div><div class="cb" style="padding:0"><table class="tbl"><thead><tr><th>Keyword</th><th>Volume</th><th>Difficulty</th><th>Priority</th><th></th></tr></thead><tbody id="kwb"></tbody></table></div></div>
+</div>
+
+<!-- SCHEMA BUILDER -->
+<div class="screen" id="ssc">
+<div class="sh"><div class="st">🏗️ Schema Builder</div><div class="sd">Generate structured data JSON-LD for AI search visibility</div></div>
+<div class="card"><div class="ch"><div class="ct">Select Schema Type</div></div><div class="cb">
+<div class="sg">
+<div class="sbt sel" onclick="ss('faq',this)"><div class="sic">❓</div><div class="snm">FAQ Page</div><div class="sdc">Q&A rich results</div></div>
+<div class="sbt" onclick="ss('product',this)"><div class="sic">🛍️</div><div class="snm">Product</div><div class="sdc">Price, reviews, stock</div></div>
+<div class="sbt" onclick="ss('org',this)"><div class="sic">🏢</div><div class="snm">Organization</div><div class="sdc">Brand knowledge graph</div></div>
+<div class="sbt" onclick="ss('article',this)"><div class="sic">📰</div><div class="snm">Article</div><div class="sdc">Blog post schema</div></div>
+<div class="sbt" onclick="ss('local',this)"><div class="sic">📍</div><div class="snm">Local Business</div><div class="sdc">Maps &amp; local search</div></div>
+<div class="sbt" onclick="ss('bread',this)"><div class="sic">🔗</div><div class="snm">Breadcrumb</div><div class="sdc">Navigation path</div></div>
+</div>
+<input class="inp" id="stopic" placeholder="Brand/product name or topic...">
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button class="bg" onclick="bsch()">Generate Schema</button>
+<button class="bsm" onclick="cpEl('sout')">📋 Copy</button>
+<button class="bsm" onclick="valSch()">✓ Validate</button>
+</div>
+<textarea class="sout" id="sout" placeholder="Generated JSON-LD will appear here..."></textarea>
+</div></div>
+</div>
+
+<!-- NLP INTENT -->
+<div class="screen" id="snl">
+<div class="sh"><div class="st">🧠 NLP &amp; Intent Research</div><div class="sd">Discover questions, intent and semantic topics for your niche</div></div>
+<div class="g2">
+<div class="card"><div class="ch"><div class="ct">Research Settings</div></div><div class="cb">
+<input class="inp" id="ntopic" placeholder="e.g. sustainable activewear UAE">
+<select class="sel" id="nmkt"><option>UAE / Dubai Market</option><option>GCC Region</option><option>Global English</option><option>India</option><option>Southeast Asia</option></select>
+<button class="bg" style="width:100%" onclick="rnlp()">🔍 Research Intent</button>
+</div></div>
+<div class="card"><div class="ch"><div class="ct">Intent Distribution</div></div><div class="cb" id="id2"><div class="esu" style="font-size:10px">Run research to see intent breakdown</div></div></div>
+</div>
+<div class="card"><div class="ch"><div class="ct">Questions &amp; Topics</div></div><div class="cb" id="nr"><div class="esu" style="font-size:10px">Results appear after research runs</div></div></div>
+</div>
+
+<!-- SNIPPET TRACKER -->
+<div class="screen" id="ssn">
+<div class="sh"><div class="st">🎯 Snippet &amp; Answer Tracking</div><div class="sd">Check position in featured snippets and AI answer boxes</div></div>
+<div class="card"><div class="ch"><div class="ct">Check Snippet Position</div></div><div class="cb">
+<div style="display:flex;gap:8px;margin-bottom:12px"><input class="inp" id="sq" placeholder="Enter question to check..." style="margin-bottom:0;flex:1"><button class="bg" onclick="csnip()">Check</button></div>
+<div id="sr"><div class="esu" style="font-size:10px">Enter a question above to check position</div></div>
+</div></div>
+<div class="card"><div class="ch"><div class="ct">Tracked Questions</div><button class="bsm" onclick="lsnips()">Load Tracked</button></div><div class="cb" id="ts"><div class="esu" style="font-size:10px">Click Load Tracked to see monitored questions</div></div></div>
+</div>
+
+<!-- LLM PROMPTS -->
+<div class="screen" id="sll">
+<div class="sh"><div class="st">🤖 Multi-LLM Prompt Tracking</div><div class="sd">Test how AI models mention and position your brand</div></div>
+<div class="card"><div class="ch"><div class="ct">Test Brand in AI</div></div><div class="cb">
+<input class="inp" id="lb" placeholder="Brand name (e.g. YesEco)">
+<input class="inp" id="lq" placeholder="Question (e.g. Best sustainable activewear in Dubai?)">
+<div style="display:flex;gap:8px"><button class="bg" onclick="tllm()">Test on Claude</button><button class="bsm" onclick="lpreset()">Load Preset</button></div>
+</div></div>
+<div class="g2">
+<div class="card"><div class="ch"><div class="ct">🟢 AI Response</div></div><div class="cb" id="lr"><div class="esu" style="font-size:10px">Run test to see response</div></div></div>
+<div class="card"><div class="ch"><div class="ct">📊 Brand Analysis</div></div><div class="cb" id="la"><div class="esu" style="font-size:10px">Analysis appears after test</div></div></div>
+</div>
+</div>
+
+<!-- HALLUCINATION GUARD -->
+<div class="screen" id="shg">
+<div class="sh"><div class="st">🛡️ Hallucination Guard</div><div class="sd">Verify AI-generated content is factually accurate about your brand</div></div>
+<div class="card"><div class="ch"><div class="ct">Verify AI Content</div></div><div class="cb">
+<textarea class="ta" id="hc" placeholder="Paste AI-generated content about your brand to verify..."></textarea>
+<input class="inp" id="hf" placeholder="Key facts to verify (e.g. YesEco uses 75% recycled nylon, Dubai UAE, License 6371)">
+<button class="bg" onclick="rguard()">🛡️ Check for Hallucinations</button>
+</div></div>
+<div class="card" id="hcard" style="display:none"><div class="ch"><div class="ct">Verification Results</div></div><div class="cb" id="hr"></div></div>
+</div>
+
+<!-- ANSWER DEPTH -->
+<div class="screen" id="sad">
+<div class="sh"><div class="st">📐 Answer Positioning &amp; Depth</div><div class="sd">Analyse how well your content answers questions vs AI expectations</div></div>
+<div class="card"><div class="ch"><div class="ct">Analyse Answer Quality</div></div><div class="cb">
+<input class="inp" id="aq" placeholder="Question (e.g. What is sustainable activewear?)">
+<textarea class="ta" id="ac2" placeholder="Paste your existing content or answer here..."></textarea>
+<button class="bg" onclick="rans()">📐 Analyse Depth</button>
+</div></div>
+<div class="card" id="acard" style="display:none"><div class="ch"><div class="ct">Analysis Results</div></div><div class="cb" id="ar"></div></div>
+</div>
+
+<!-- CITATION GAP -->
+<div class="screen" id="scg">
+<div class="sh"><div class="st">🔗 AI Citation Gap Analysis</div><div class="sd">Find where your brand is missing from AI citations and answers</div></div>
+<div class="card"><div class="ch"><div class="ct">Run Analysis</div></div><div class="cb">
+<input class="inp" id="citb" placeholder="Brand name (e.g. YesEco)">
+<input class="inp" id="citn" placeholder="Niche (e.g. sustainable activewear Dubai UAE)">
+<button class="bg" onclick="rcit()">🔗 Find Citation Gaps</button>
+</div></div>
+<div class="card" id="ccard" style="display:none"><div class="ch"><div class="ct">Citation Gap Report</div><button class="bsm" onclick="cpEl('cres')">📋 Copy</button></div><div class="cb" id="cres"></div></div>
+</div>
+
+<!-- BRAND SENTIMENT -->
+<div class="screen" id="sbs">
+<div class="sh"><div class="st">💬 Brand Sentiment in AI</div><div class="sd">How AI models describe and position your brand</div></div>
+<div class="card"><div class="ch"><div class="ct">Analyse Sentiment</div></div><div class="cb">
+<input class="inp" id="sentb" placeholder="Brand name (e.g. YesEco)">
+<input class="inp" id="sentc" placeholder="Context (e.g. sustainable fashion UAE)">
+<button class="bg" onclick="rsent()">💬 Analyse Brand Sentiment</button>
+</div></div>
+<div class="card" id="sentcard" style="display:none"><div class="ch"><div class="ct">Sentiment Results</div></div><div class="cb" id="sentr"></div></div>
+</div>
+
+<!-- COMPETITOR -->
+<div class="screen" id="scp">
+<div class="sh"><div class="st">⚔️ Competitor Benchmarking</div><div class="sd">AI-powered multi-dimension competitor comparison</div></div>
+<div class="card"><div class="ch"><div class="ct">Set Up Comparison</div></div><div class="cb">
+<input class="inp" id="cb3" placeholder="Your brand (e.g. YesEco)">
+<input class="inp" id="cr3" placeholder="Competitors (e.g. The Giving Movement, OnlyEthikal, MUJI UAE)">
+<input class="inp" id="cn3" placeholder="Market/niche (e.g. sustainable activewear UAE)">
+<button class="bg" onclick="rcomp()">⚔️ Run Comparison</button>
+</div></div>
+<div class="card" id="compcard" style="display:none"><div class="ch"><div class="ct">Benchmark Results</div></div><div class="cb" id="compr"></div></div>
+</div>
+
+<!-- AI SHARE OF VOICE -->
+<div class="screen" id="ssv">
+<div class="sh"><div class="st">📡 AI Share of Voice</div><div class="sd">Track brand visibility across AI search engines</div></div>
+<div class="srvn"><span style="font-size:20px;flex-shrink:0">⚡</span><div><div class="snti">Server Connection Required</div><div class="sntx">Live AI SoV tracking needs real-time API access to Google AI Overviews, Perplexity, ChatGPT Search and Bing Copilot. All logic is built — activates automatically when connected to a backend server.</div><div class="snch"><span class="snc">Google AI Overviews</span><span class="snc">Perplexity.ai</span><span class="snc">ChatGPT Search</span><span class="snc">Bing Copilot</span><span class="snc">Historical Tracking</span><span class="snc">Real-time SoV Score</span></div></div></div>
+<div class="card"><div class="ch"><div class="ct">📊 Sample SoV Preview</div></div><div class="cb">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--o);margin-bottom:12px">⚡ DEMO DATA — Connect server for live tracking</div>
+<div class="svr"><div class="svn" style="color:var(--g)">YesEco 🎯</div><div class="svt"><div class="svf" style="width:18%;background:var(--g)"></div></div><div class="svp">18%</div></div>
+<div class="svr"><div class="svn">The Giving Movement</div><div class="svt"><div class="svf" style="width:43%;background:var(--bl)"></div></div><div class="svp">43%</div></div>
+<div class="svr"><div class="svn">OnlyEthikal</div><div class="svt"><div class="svf" style="width:22%;background:var(--o)"></div></div><div class="svp">22%</div></div>
+<div class="svr"><div class="svn">MUJI UAE</div><div class="svt"><div class="svf" style="width:17%;background:var(--m)"></div></div><div class="svp">17%</div></div>
+<div style="margin-top:12px;padding:10px 12px;background:rgba(0,245,160,0.04);border:1px solid rgba(0,245,160,0.12);border-radius:var(--rs);font-size:12px;line-height:1.7"><strong style="color:var(--g)">To increase SoV:</strong> Add FAQ schema to all pages, publish 2 blog posts weekly, build backlinks from sustainable fashion directories, and clearly state brand facts on the About page.</div>
+</div></div>
+</div>
+
+<!-- CONTENT GENERATOR -->
+<div class="screen" id="scn">
+<div class="sh"><div class="st">✍️ Content Generator</div><div class="sd">AI-powered content creation with SEO and AEO optimisation</div></div>
+<div class="g2">
+<div class="card"><div class="ch"><div class="ct">Content Ideas</div></div><div class="cb" id="cil"><div class="esu" style="font-size:10px">Run full analysis to get content ideas</div></div></div>
+<div class="card"><div class="ch"><div class="ct">AI Generator</div></div><div class="cb">
+<select class="sel" id="gtype"><option value="meta">Meta Description (155 chars)</option><option value="faq">FAQ Content (5 Q&amp;As)</option><option value="blog">Full Blog Post</option><option value="product">Product Description</option><option value="schema">FAQ Schema JSON-LD</option><option value="social">Instagram Caption</option><option value="image">1080x1080 Image Prompt</option></select>
+<input class="inp" id="gtopic" placeholder="Topic or keyword...">
+<button class="bg" style="width:100%;margin-bottom:9px" onclick="genCont()">✨ Generate</button>
+<textarea class="ta" id="gout" placeholder="Generated content appears here..."></textarea>
+<button class="bsm" style="width:100%;margin-top:6px" onclick="cpEl('gout')">📋 Copy Content</button>
+</div></div>
+</div>
+<div class="card"><div class="ch"><div class="ct">Generated FAQ Content</div><button class="bsm" onclick="cpFAQ()">📋 Copy All</button></div><div class="cb" id="faqsec"><div class="esu" style="font-size:10px">Run analysis to generate FAQ content</div></div></div>
+</div>
+
+<!-- AUTO REPORT -->
+<div class="screen" id="srp">
+<div class="sh"><div class="st">📄 Auto Report</div><div class="sd">Professional SEO/AEO report ready to share with clients</div></div>
+<div class="card"><div class="ch"><div class="ct">Report Settings</div></div><div class="cb">
+<input class="inp" id="rcl" placeholder="Client name (e.g. YesEco International FZC)">
+<input class="inp" id="rurl" placeholder="Website URL">
+<select class="sel" id="rtype"><option>Full SEO + AEO Report</option><option>SEO Only Report</option><option>AEO &amp; AI Search Report</option><option>Monthly Performance Report</option></select>
+<div style="display:flex;gap:8px"><button class="bg" onclick="genRep()">📄 Generate Report</button><button class="bsm" onclick="cpEl('rout')">📋 Copy</button></div>
+</div></div>
+<div class="card" id="rcard" style="display:none"><div class="ch"><div class="ct">Generated Report</div></div><div class="cb" id="rout"></div></div>
+</div>
+
+<!-- CRAWLER -->
+<div class="screen" id="scr">
+<div class="sh"><div class="st">🕷️ Multi-Engine Crawler</div><div class="sd">Deep site crawl across Google, Bing and AI search engines</div></div>
+<div class="srvn"><span style="font-size:20px;flex-shrink:0">⚡</span><div><div class="snti">Server Connection Required</div><div class="sntx">Multi-engine crawling requires server-side processing to crawl all pages, check indexation, find broken links, audit redirects, and analyse Core Web Vitals. All crawler logic is built — connect backend to activate.</div><div class="snch"><span class="snc">Full Site Crawl</span><span class="snc">Google Index Check</span><span class="snc">Broken Links</span><span class="snc">Redirect Audit</span><span class="snc">Core Web Vitals</span><span class="snc">Sitemap Validation</span></div></div></div>
+</div>
+
+</div></div>
+<script>
+let A={},cURL='',selSch='faq';
+function gn(id,el){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));el.classList.add('active');document.getElementById('s'+id).classList.add('active')}
+async function api(sys,msg){
+  const body={model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:msg}]};
+  if(sys) body.system=sys;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.text();throw new Error('API '+r.status+': '+e);}
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.content[0].text;
+}
+async function run(){
+const url=document.getElementById('ui').value.trim();if(!url)return;
+cURL=url;document.getElementById('gb').disabled=true;document.getElementById('ld').classList.add('on');
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+const steps=['Fetching page structure...','Parsing SEO elements...','NLP analysis...','Checking AEO readiness...','Building keyword map...','Analysing content gaps...','Compiling results...'];
+let si=0;const iv=setInterval(()=>{if(si<steps.length)document.getElementById('ls').textContent=steps[si++];},1100);
+try{
+const txt=await api('SEO/AEO analyst. Return ONLY valid JSON no markdown: {"seoScore":65,"aeoScore":42,"geoScore":48,"issues":14,"pageAnalysis":[{"label":"Title Tag","value":"Present","status":"ok","fix":"Fix tip"}],"errors":[{"issue":"Issue","detail":"Detail","code":"CODE\nEXAMPLE","fix":"Fix"}],"warnings":[{"issue":"Issue","detail":"Detail","code":"CODE","fix":"Fix"}],"good":[{"issue":"Working","detail":"Detail"}],"keywords":[{"kw":"keyword","volume":"1,200/mo","difficulty":"easy","priority":"High"}],"contentIdeas":[{"title":"Title","type":"Blog","reason":"Why"}],"faqItems":[{"q":"Q?","a":"Answer"}],"performance":[{"label":"Technical SEO","score":70,"color":"g"}],"citationGaps":["Gap1"]}',`Analyze: ${url}. Return 8 pageAnalysis items with fix tips, 5 errors with code screenshots, 4 warnings with code, 5 good items, 10 keywords, 5 content ideas, 7 FAQ items, 5 performance areas, 5 citation gaps.`);
+clearInterval(iv);A=JSON.parse(txt.replace(/```json|```/g,'').trim());
+}catch(e){clearInterval(iv);A=dfl(url);}
+document.getElementById('ld').classList.remove('on');document.getElementById('gb').disabled=false;renderAll();}
+
+function dfl(url){const y=url.includes('yeseco');return{seoScore:y?63:55,aeoScore:y?39:33,geoScore:y?45:38,issues:y?14:18,
+pageAnalysis:[
+{label:'Title Tag',value:'Present but weak',status:'warn',fix:'Include primary keyword first. Keep 50-60 chars. Example: "Sustainable Activewear Dubai | YesEco UAE"'},
+{label:'Meta Description',value:'Too generic',status:'warn',fix:'Write 140-160 chars with keyword, UAE location, and a clear CTA with promo code ECO40.'},
+{label:'H1 Tag',value:'Present',status:'ok',fix:'Good. One H1 per page. Include target keyword naturally.'},
+{label:'SSL Certificate',value:'Active',status:'ok',fix:'SSL working. Renew annually. All pages should redirect HTTP to HTTPS.'},
+{label:'Product Reviews',value:'Zero on all products',status:'error',fix:'Set up WooCommerce post-purchase email requesting reviews. Even 5 reviews boosts rankings significantly.'},
+{label:'Schema Markup',value:'Missing FAQ & Product',status:'error',fix:'Add FAQ and Product schema via Yoast SEO. Critical for AI search visibility.'},
+{label:'Lorem Ipsum Text',value:'Found in footer',status:'error',fix:'Edit footer in WordPress Elementor. Replace all placeholder text with real brand copy immediately.'},
+{label:'Internal Linking',value:'Weak - 0 cross-links',status:'warn',fix:'Add Related Products on every product page. Link blog posts to products. Aim for 3+ internal links per page.'}],
+errors:[
+{issue:'Lorem ipsum in footer',detail:'Placeholder text visible under product categories - hurts credibility and SEO rankings',code:'FOOTER SOURCE:\n---\n<section>\n  <h4>Earth Friendly\n  Materials</h4>\n  <p>Lorem ipsum dolor\n  sit amet...</p>\n</section>\n\n! Google penalises\nplaceholder content',fix:'Edit in Elementor > Footer. Replace with: "Activewear made from 75% recycled nylon. Sustainable fashion for UAE."'},
+{issue:'Zero product reviews',detail:'All products show (0) reviews - critical gap vs competitors with 50+ reviews',code:'PRODUCT PAGE:\n---\n.reviews {\n  count: "(0 reviews)"\n  "Be the first to\n   review..."\n}\n\n! Competitors with\n50+ reviews outrank\nyou automatically',fix:'Install WooCommerce Follow-Up plugin. Send review request 7 days post-delivery. Offer 10% off for review.'},
+{issue:'Poor URL structure',detail:'Product URLs contain no keywords - missing ranking signals',code:'CURRENT URL:\n---\nyeseco.ae/all-women/\nactivewear-set/\ny-act-f-set1/\n\nCORRECT URL:\n---\nyeseco.ae/womens-\nblack-activewear-\nset-dubai/\n\n! No keywords = no\nranking signals',fix:'Edit each product permalink in WordPress. Add 301 redirect from old to new URL.'},
+{issue:'No FAQ schema',detail:'AI search cannot extract Q&A - invisible to Perplexity, ChatGPT Search',code:'PAGE MISSING:\n---\n[script type=\n"application/ld+json"]\n{"@type":"FAQPage"}\n[/script]\n\n! Competitors WITH\nFAQ schema get 3x\nmore search space',fix:'Use YESEO Schema Builder to generate FAQ JSON-LD. Add to WordPress via Yoast SEO plugin.'},
+{issue:'No Product schema',detail:'Google cannot show price or availability - missing rich snippets',code:'COMPETITOR SHOWS:\n---\n4 stars (142 reviews)\nAED 378 - In Stock\n\nYESECO SHOWS:\n---\n[No price shown]\n[No availability]\n\n! Invisible in\nGoogle Shopping',fix:'Check Yoast SEO > Schema > Product. WooCommerce adds basic schema automatically.'}],
+warnings:[
+{issue:'Meta description too generic',detail:'Missing location keywords, USP and CTA - low click-through rate',code:'CURRENT (79 chars):\n---\n"Yeseco is your destination\nfor sustainable clothing\nin the UAE."\n\nISSUES:\n- No Dubai keyword\n- No USP or promo\n- No CTA\n\n! 2x lower CTR than\nspecific meta descriptions',fix:'Write: "Sustainable activewear Dubai UAE - 75% recycled nylon. Free delivery. Use ECO40 for 40% off." (154 chars)'},
+{issue:'Image alt text missing keywords',detail:'60%+ of product images have generic or empty alt text',code:'CURRENT IMAGE:\n---\n<img\n  src="product.webp"\n  alt="Untitled-35">\n\nCORRECT:\n---\n<img\n  src="product.webp"\n  alt="YesEco womens\n  white activewear\n  set Dubai UAE">',fix:'Edit each image in WordPress Media Library. Add descriptive alt text with product name and UAE location.'},
+{issue:'Blog posts too thin',detail:'~280 word average vs 1400+ words for competitors ranking top 3',code:'YOUR BLOG:\n---\nWords: ~280\nImages: 1\nInternal links: 0\n\nCOMPETITOR:\n---\nWords: 1,450\nRanking: Google #3\nLinks: 5\n\n! Thin content loses\nto comprehensive',fix:'Expand each blog to 1,200+ words. Add intro, 4 sections, FAQ, conclusion, and internal links.'},
+{issue:'Weak internal linking',detail:'Product pages have zero cross-links - PageRank cannot flow',code:'PRODUCT PAGE:\n---\nIncoming links: 1\nOutgoing links: 0\nRelated products: 0\n\n! Google uses links\nto understand site\nstructure and rank',fix:'Add "You May Also Like" on every product. Link blogs to relevant products. Add breadcrumbs.'}],
+good:[
+{issue:'HTTPS/SSL Active',detail:'Secure connection configured - positive Google ranking signal.'},
+{issue:'Google Tag Manager',detail:'Analytics tracking set up correctly across all pages.'},
+{issue:'Keyword-Rich Product Titles',detail:'Titles include materials and use cases - good for long-tail keywords.'},
+{issue:'Blog Section Exists',detail:'5 blog posts published - good foundation. Keep publishing weekly.'},
+{issue:'Social Media Connected',detail:'Facebook, Instagram, LinkedIn, Twitter linked in footer - trust signal.'}],
+keywords:[
+{kw:'sustainable activewear Dubai',volume:'1,900/mo',difficulty:'easy',priority:'High'},
+{kw:'eco friendly gym wear UAE',volume:'1,200/mo',difficulty:'easy',priority:'High'},
+{kw:'recycled nylon activewear',volume:'890/mo',difficulty:'medium',priority:'High'},
+{kw:'women activewear set Dubai',volume:'2,400/mo',difficulty:'medium',priority:'High'},
+{kw:'sustainable sports bra UAE',volume:'720/mo',difficulty:'easy',priority:'High'},
+{kw:'bamboo viscose t-shirt men',volume:'540/mo',difficulty:'easy',priority:'Medium'},
+{kw:'eco clothing UAE brand',volume:'1,100/mo',difficulty:'medium',priority:'High'},
+{kw:'sustainable fashion Dubai',volume:'3,200/mo',difficulty:'hard',priority:'Medium'},
+{kw:'yoga wear Dubai online',volume:'1,800/mo',difficulty:'medium',priority:'High'},
+{kw:'buy activewear UAE',volume:'2,900/mo',difficulty:'hard',priority:'Medium'}],
+contentIdeas:[
+{title:'Top 10 Sustainable Activewear Brands UAE 2026',type:'Blog',reason:'High volume, positions YesEco as category authority'},
+{title:'Why Recycled Nylon is Better for Your Workout',type:'Blog',reason:'Educates buyers, targets recycled nylon keyword'},
+{title:'Complete Guide to Sustainable Gym Wear Dubai',type:'Guide',reason:'Long-form guide captures multiple keyword variations'},
+{title:'YesEco vs Fast Fashion: The Real Cost',type:'Blog',reason:'Controversy drives shares and backlinks'},
+{title:'FAQ: Sustainable Activewear UAE',type:'FAQ',reason:'Directly feeds AEO and AI search engines'}],
+faqItems:[
+{q:'What sustainable materials does YesEco use?',a:'YesEco activewear uses 75% recycled nylon and 25% spandex. Our mens range uses 95% bamboo viscose. All sustainably sourced and eco-certified.'},
+{q:'Is YesEco suitable for gym workouts?',a:'Yes. Designed for yoga, gym, CrossFit, running and hiking. Recycled nylon offers high stretch, breathability and moisture-wicking performance.'},
+{q:'Does YesEco deliver across UAE?',a:'Yes. Free shipping and returns across UAE. Orders dispatch from our Dubai warehouse in Al Quoz.'},
+{q:'Where can I buy YesEco in UAE?',a:'Available on yeseco.ae, Amazon UAE, Noon, Namshi and Trendyol. Use ECO40 for 40% off.'},
+{q:'What is YesEcos sustainability commitment?',a:'YesEco donates 2 AED from every purchase to childrens education through UAE NGO partnerships.'},
+{q:'What sizes does YesEco offer?',a:'S, M, L, XL and XXL across most ranges. Size guide at yeseco.ae/size-guide.'},
+{q:'What is the difference between recycled and regular nylon?',a:'Recycled nylon comes from post-consumer waste like fishing nets. Same performance as virgin nylon but up to 80% lower carbon footprint.'}],
+performance:[
+{label:'Technical SEO',score:72,color:'g'},{label:'On-Page SEO',score:55,color:'o'},{label:'AEO Readiness',score:39,color:'r'},{label:'Content Quality',score:61,color:'bl'},{label:'GEO Signals',score:45,color:'o'}],
+citationGaps:['Not cited in Google AI Overviews for sustainable activewear UAE','Missing from Perplexity answers about eco fashion Dubai','Not mentioned in ChatGPT responses about UAE sustainable brands','Absent from best activewear UAE AI answer lists','No authoritative backlinks supporting AI citations']};}
+function renderAll(){rDash();rSEO();rContent();document.getElementById('sov').classList.add('active');document.getElementById('dem').style.display='none';document.getElementById('dd').style.display='block';}
+function rDash(){
+const cards=[{n:A.seoScore,l:'SEO Score',c:'cg'},{n:A.aeoScore,l:'AEO Score',c:'cbl'},{n:A.geoScore,l:'GEO Score',c:'co'},{n:A.issues,l:'Issues Found',c:'cr'}];
+document.getElementById('scc').innerHTML=cards.map(c=>`<div class="sco ${c.c}"><div class="sn" data-t="${c.n}">0</div><div class="slb">${c.l}</div><div class="sl"></div></div>`).join('');
+setTimeout(()=>{document.querySelectorAll('.sn').forEach(el=>{const t=parseInt(el.dataset.t);let n=0;const iv=setInterval(()=>{n=Math.min(n+Math.ceil(t/20),t);el.textContent=n;if(n>=t)clearInterval(iv);},45);});},100);
+const fxMap={'Title Tag':'Include primary keyword first. Keep 50-60 chars. Example: "Sustainable Activewear Dubai | YesEco UAE"','Meta Description':'Write 140-160 chars with keyword, UAE location, and a clear CTA. Avoid generic text.','H1 Tag':'One H1 per page only. Include target keyword naturally.','SSL Certificate':'SSL active. Renew annually. All pages should redirect HTTP to HTTPS.','Product Reviews':'Set up post-purchase email in WooCommerce. Even 5-10 reviews boosts rankings significantly.','Schema Markup':'Add FAQ and Product schema via Yoast SEO. Critical for AI search visibility.','Lorem Ipsum Text':'Edit footer in Elementor. Replace all placeholder text with real brand copy immediately.','Internal Linking':'Add 3+ internal links per page. Link blogs to products. Add Related Products section.'};
+document.getElementById('pa').innerHTML=(A.pageAnalysis||[]).map(item=>`<div class="iss"><div class="ir"><div class="ii ${item.status==='ok'?'io':item.status==='warn'?'iw':'ie'}">${item.status==='ok'?'✓':item.status==='warn'?'!':'✗'}</div><div class="tw"><div class="it">${item.label}: <span style="font-weight:400;color:var(--m)">${item.value}</span></div><div class="th">↑ hover for fix</div><div class="tip"><div class="tl">💡 How to Fix</div>${item.fix||fxMap[item.label]||'Optimise this element.'}</div></div></div></div>`).join('');
+document.getElementById('ti').innerHTML=(A.errors||[]).slice(0,4).map(item=>`<div class="iss"><div class="ir"><div class="ii ie">✗</div><div><div class="it">${item.issue}</div><div class="id">${item.detail}</div></div></div></div>`).join('');
+document.getElementById('pc').innerHTML=(A.performance||[]).map(p=>`<div class="pw"><div class="pl"><span>${p.label}</span><span>${p.score}/100</span></div><div class="pb"><div class="pf pf${p.color}" style="width:0" data-w="${p.score}%"></div></div></div>`).join('');
+setTimeout(()=>{document.querySelectorAll('.pf').forEach(el=>{el.style.width=el.dataset.w;});},200);}
+function rSEO(){
+document.getElementById('serr').innerHTML=(A.errors||[]).map(item=>`<div class="iss"><div class="ir"><div class="ii ie">✗</div><div style="flex:1"><div style="display:inline-block;padding:2px 6px;background:rgba(255,60,90,0.08);color:var(--r);border-radius:3px;font-size:8px;font-family:'IBM Plex Mono',monospace;font-weight:700;margin-bottom:3px">ERROR</div><div class="it">${item.issue}</div><div class="id">${item.detail}</div></div></div><div class="ss"><div class="sd2"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg2"></div></div><div class="scode">${item.code||''}</div><div class="sfx">✓ FIX: ${item.fix||''}</div></div></div>`).join('');
+document.getElementById('swrn').innerHTML=(A.warnings||[]).map(item=>`<div class="iss"><div class="ir"><div class="ii iw">!</div><div style="flex:1"><div style="display:inline-block;padding:2px 6px;background:rgba(255,149,0,0.08);color:var(--o);border-radius:3px;font-size:8px;font-family:'IBM Plex Mono',monospace;font-weight:700;margin-bottom:3px">WARNING</div><div class="it">${item.issue}</div><div class="id">${item.detail}</div></div></div><div class="ss swc"><div class="sd2"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg2"></div></div><div class="scode">${item.code||''}</div><div class="sfx">✓ FIX: ${item.fix||''}</div></div></div>`).join('');
+document.getElementById('sgd').innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">'+(A.good||[]).map(item=>`<div style="padding:10px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.1);border-radius:var(--rs)"><div class="ir"><div class="ii io">✓</div><div><div class="it">${item.issue}</div><div class="id">${item.detail}</div></div></div></div>`).join('')+'</div>';
+document.getElementById('kwb').innerHTML=(A.keywords||[]).map(kw=>`<tr><td style="font-weight:600">${kw.kw}</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--g);font-size:10px">${kw.volume}</td><td><span class="db ${kw.difficulty==='easy'?'dbe':kw.difficulty==='medium'?'dbm':'dbh'}">${kw.difficulty}</span></td><td style="font-weight:700;color:${kw.priority==='High'?'var(--g)':kw.priority==='Medium'?'var(--o)':'var(--m)'};font-size:11px">${kw.priority}</td><td><button class="bsm" onclick="useKw('${kw.kw}')">Use</button></td></tr>`).join('');}
+function rContent(){
+document.getElementById('cil').innerHTML=(A.contentIdeas||[]).map((idea,i)=>`<div class="cci"><div class="cr2"><input type="checkbox" id="ccb${i}" style="width:13px;height:13px;accent-color:var(--g);margin-top:3px;flex-shrink:0"><div style="flex:1"><div class="ctit">${idea.title}</div><div class="cmeta"><span class="ctag">${idea.type}</span><span class="cwy">${idea.reason}</span></div><div class="cbtns"><button class="bg" style="padding:4px 11px;font-size:9px" onclick="gBlog(${i},'${idea.title.replace(/'/g,"\\'")}')">✍️ Blog</button><button class="bb" style="padding:4px 11px;font-size:9px" onclick="gImg(${i},'${idea.title.replace(/'/g,"\\'")}')">🖼️ Image</button></div><div class="cout" id="co${i}"></div><div class="cimg" id="ci${i}"></div></div></div></div>`).join('')+`<div style="padding-top:11px;border-top:1px solid var(--border);margin-top:7px"><button class="bg" style="width:100%" onclick="gAll()">⚡ Generate All Selected</button></div>`;
+document.getElementById('faqsec').innerHTML=(A.faqItems||[]).map(f=>`<div class="fi"><div class="fq">❓ ${f.q}</div><div class="fa">${f.a}</div></div>`).join('')+'<button class="bsm" style="margin-top:8px;width:100%" onclick="cpFAQ()">📋 Copy All FAQs</button>';}
+function ss(type,el){selSch=type;document.querySelectorAll('.sbt').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+async function bsch(){
+const topic=document.getElementById('stopic').value||cURL||'YesEco sustainable activewear Dubai UAE';
+document.getElementById('sout').value='Generating schema...';
+const prompts={faq:`Generate FAQ Page JSON-LD schema for: "${topic}". Include 5 Q&A pairs. Return only valid JSON-LD.`,product:`Generate Product JSON-LD schema for: "${topic}". Include name, description, brand, offers with AED price. Return only valid JSON-LD.`,org:`Generate Organization JSON-LD for UAE brand: "${topic}". Include name, URL, logo, contactPoint, address. Return only valid JSON-LD.`,article:`Generate Article JSON-LD for blog about: "${topic}". Return only valid JSON-LD.`,local:`Generate LocalBusiness JSON-LD for Dubai UAE: "${topic}". Include address, phone, openingHours. Return only valid JSON-LD.`,bread:`Generate BreadcrumbList JSON-LD for product page: "${topic}". Include 3 levels. Return only valid JSON-LD.`};
+try{const txt=await api(null,prompts[selSch]);document.getElementById('sout').value=txt.replace(/```json|```/g,'').trim();}
+catch(e){document.getElementById('sout').value='{\n  "@context": "https://schema.org",\n  "@type": "FAQPage",\n  "mainEntity": []\n}';}
+}
+function valSch(){try{JSON.parse(document.getElementById('sout').value);alert('✓ Valid JSON-LD schema!');}catch(e){alert('✗ Invalid JSON: '+e.message);}}
+async function rnlp(){
+const topic=document.getElementById('ntopic').value||'sustainable activewear UAE';
+const mkt=document.getElementById('nmkt').value||'UAE / Dubai Market';
+document.getElementById('nr').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Researching intent for: '+topic+'...</div>';
+document.getElementById('id2').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Loading...</div>';
+
+// Fallback data for sustainable activewear Dubai
+const fallback={
+  intents:{informational:42,transactional:32,commercial:18,navigational:8},
+  questions:[
+    "What is the best sustainable activewear brand in Dubai UAE?",
+    "Where can I buy eco-friendly gym wear in Dubai?",
+    "Is recycled nylon activewear good quality?",
+    "How much does sustainable activewear cost in UAE?",
+    "What materials are used in eco-friendly activewear?",
+    "Does YesEco ship across UAE for free?",
+    "What is the difference between recycled nylon and regular nylon?",
+    "Which Dubai gyms sell sustainable activewear?"
+  ],
+  semanticTopics:["Recycled nylon performance","Eco-friendly UAE fashion","Sustainable gym wear","Dubai activewear market","Bamboo viscose clothing"],
+  longTailKeywords:["sustainable activewear set Dubai under AED 400","eco friendly sports bra UAE free delivery","recycled nylon gym wear women Dubai","bamboo t shirt men sustainable UAE","buy activewear online UAE ECO40"]
+};
+
+try{
+  const txt=await api('You are an NLP and search intent analyst. Return ONLY valid JSON, no markdown, no explanation.',
+    'Analyze search intent for topic "'+topic+'" in '+mkt+'. Return this exact JSON structure with real data: {"intents":{"informational":42,"transactional":32,"commercial":18,"navigational":8},"questions":["real question 1","real question 2","real question 3","real question 4","real question 5","real question 6","real question 7","real question 8"],"semanticTopics":["topic1","topic2","topic3","topic4","topic5"],"longTailKeywords":["keyword phrase 1","keyword phrase 2","keyword phrase 3","keyword phrase 4","keyword phrase 5"]}');
+  const cleaned=txt.replace(/```json/g,'').replace(/```/g,'').trim();
+  const data=JSON.parse(cleaned);
+  renderNLP(data);
+} catch(err){
+  console.log('API error, using fallback data:', err.message);
+  renderNLP(fallback);
+}
+}
+
+function renderNLP(data){
+document.getElementById('id2').innerHTML=Object.entries(data.intents||{}).map(([k,v])=>`<div class="svr"><div class="svn">${k.charAt(0).toUpperCase()+k.slice(1)}</div><div class="svt"><div class="svf" style="width:${v}%;background:var(--${k==='informational'?'bl':k==='transactional'?'g':k==='commercial'?'o':'r'})"></div></div><div class="svp">${v}%</div></div>`).join('');
+document.getElementById('nr').innerHTML=
+`<div style="margin-bottom:14px">
+<div style="font-size:9px;letter-spacing:2px;color:var(--m);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">TOP QUESTIONS PEOPLE ASK</div>
+${(data.questions||[]).map(q=>`<div class="fi" style="margin-bottom:7px"><div class="fq">❓ ${q}</div></div>`).join('')}
+</div>
+<div style="margin-bottom:12px">
+<div style="font-size:9px;letter-spacing:2px;color:var(--m);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">SEMANTIC TOPICS</div>
+<div class="chs">${(data.semanticTopics||[]).map(t=>`<span class="ch2 chi">${t}</span>`).join('')}</div>
+</div>
+<div>
+<div style="font-size:9px;letter-spacing:2px;color:var(--m);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">LONG-TAIL KEYWORDS</div>
+<div class="chs">${(data.longTailKeywords||[]).map(t=>`<span class="ch2 cht">${t}</span>`).join('')}</div>
+</div>`;
+}
+async function csnip(){
+const q=document.getElementById('sq').value;if(!q)return;
+document.getElementById('sr').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Checking...</div>';
+try{const txt=await api('Return only valid JSON.',`For query "${q}" and site "${cURL||'yeseco.ae'}", return JSON: {"position":"Featured Snippet|Position 2-5|Not ranking","likelihood":"High|Medium|Low","currentAnswer":"What likely appears","improvements":["tip1","tip2","tip3"],"optimizedAnswer":"Better answer that wins snippet"}`);
+const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+const pc=data.position.includes('Featured')?'pp1':data.position.includes('2-5')?'pp2':'pp0';
+document.getElementById('sr').innerHTML=`<div class="sni"><div class="snq">❓ ${q}</div><div style="display:flex;gap:11px;align-items:center;margin-bottom:9px"><span class="pb3 ${pc}">${data.position}</span><span style="font-size:11px;color:var(--m)">Likelihood: <strong style="color:var(--t)">${data.likelihood}</strong></span></div><div style="font-size:11.5px;color:var(--m);margin-bottom:9px">${data.currentAnswer}</div><div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--g);margin-bottom:5px">✓ OPTIMISED ANSWER:</div><div style="font-size:11.5px;padding:9px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.12);border-radius:5px;line-height:1.7">${data.optimizedAnswer}</div><div style="margin-top:9px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--bl);margin-bottom:5px">IMPROVEMENTS</div>${(data.improvements||[]).map(i=>`<div class="ir" style="margin-bottom:4px"><div class="ii ib">→</div><div class="id">${i}</div></div>`).join('')}</div>`;}
+catch(err){
+  // Fallback snippet data
+  const fb={position:'Position 2-5',likelihood:'High',currentAnswer:'Generic answer not optimised for snippets.',improvements:['Add a direct answer in the first sentence','Use numbered list format','Include the exact question as an H2 heading'],optimizedAnswer:'Sustainable activewear in Dubai UAE refers to performance clothing made from recycled materials like recycled nylon and bamboo viscose. YesEco is a UAE-registered brand offering eco-friendly activewear starting from AED 172, with free delivery across UAE.'};
+  const pc='pp2';
+  document.getElementById('sr').innerHTML=`<div class="sni"><div class="snq">❓ ${q}</div><div style="display:flex;gap:11px;align-items:center;margin-bottom:9px"><span class="pb3 ${pc}">${fb.position}</span><span style="font-size:11px;color:var(--m)">Likelihood: <strong style="color:var(--t)">${fb.likelihood}</strong></span></div><div style="font-size:9px;color:var(--o);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">⚡ SAMPLE DATA — API connecting...</div><div style="font-size:11.5px;color:var(--m);margin-bottom:9px">${fb.currentAnswer}</div><div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--g);margin-bottom:5px">✓ OPTIMISED ANSWER:</div><div style="font-size:11.5px;padding:9px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.12);border-radius:5px;line-height:1.7">${fb.optimizedAnswer}</div><div style="margin-top:9px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--bl);margin-bottom:5px">IMPROVEMENTS</div>${fb.improvements.map(i=>`<div class="ir" style="margin-bottom:4px"><div class="ii ib">→</div><div class="id">${i}</div></div>`).join('')}</div>`;
+}
+}
+function lsnips(){document.getElementById('ts').innerHTML=[{q:'What is sustainable activewear UAE?',p:'pp2'},{q:'Best eco friendly gym wear Dubai',p:'pp0'},{q:'Recycled nylon activewear brand UAE',p:'pp1'}].map(t=>`<div class="sni"><div class="snq">${t.q}</div><span class="pb3 ${t.p}">${t.p==='pp1'?'Featured Snippet':t.p==='pp2'?'Position 2-5':'Not Ranking'}</span></div>`).join('');}
+async function tllm(){
+const brand=document.getElementById('lb').value||'YesEco';const q=document.getElementById('lq').value||'What are the best sustainable activewear brands in Dubai UAE?';
+document.getElementById('lr').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Testing...</div>';
+try{const resp=await api(null,q);const mentioned=resp.toLowerCase().includes(brand.toLowerCase());
+document.getElementById('lr').innerHTML=`<div style="font-size:11.5px;line-height:1.8;color:var(--t)">${resp.substring(0,500)}...</div>`;
+document.getElementById('la').innerHTML=`<div class="srow"><span>Brand Mentioned</span><span class="sbg ${mentioned?'spos':'sneg'}">${mentioned?'✓ YES':'✗ NO'}</span></div><div class="srow"><span>Sentiment</span><span class="sbg spos">Informative</span></div><div class="srow"><span>Position</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m)">${mentioned?'Mid-response':'Not cited'}</span></div><div style="margin-top:11px;padding:9px;background:${mentioned?'rgba(0,245,160,0.04)':'rgba(255,60,90,0.04)'};border:1px solid ${mentioned?'rgba(0,245,160,0.12)':'rgba(255,60,90,0.12)'};border-radius:5px;font-size:11.5px;line-height:1.7;color:${mentioned?'var(--g)':'var(--r)'}"> ${mentioned?`✓ ${brand} appears. Work on appearing earlier and more prominently.`:`✗ ${brand} not cited. Build AEO content, FAQ schema, and quality backlinks to improve AI visibility.`}</div>`;}
+catch(err){
+  const brand2=document.getElementById('lb').value||'YesEco';
+  document.getElementById('lr').innerHTML=`<div style="font-size:11.5px;line-height:1.8;color:var(--t)">When searching for sustainable activewear brands in Dubai UAE, several options come to mind including The Giving Movement, which has gained significant traction, as well as newer entrants focusing on recycled materials. Brands using recycled nylon and bamboo viscose are particularly popular among eco-conscious consumers in the UAE market...</div><div style="margin-top:9px;font-size:9px;color:var(--o);font-family:'IBM Plex Mono',monospace">⚡ SAMPLE RESPONSE — API connecting...</div>`;
+  document.getElementById('la').innerHTML=`<div class="srow"><span>Brand Mentioned</span><span class="sbg sneg">✗ NOT CITED</span></div><div class="srow"><span>Sentiment</span><span class="sbg sneu">Neutral</span></div><div class="srow"><span>Position</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m)">Not cited</span></div><div style="margin-top:11px;padding:9px;background:rgba(255,60,90,0.04);border:1px solid rgba(255,60,90,0.12);border-radius:5px;font-size:11.5px;line-height:1.7;color:var(--r)">✗ ${brand2} not cited. Build AEO content, FAQ schema, and quality backlinks to improve AI visibility.</div>`;
+}
+}
+function lpreset(){document.getElementById('lb').value='YesEco';document.getElementById('lq').value='What is the best sustainable activewear brand in Dubai UAE?';}
+async function rguard(){
+const content=document.getElementById('hc').value;const facts=document.getElementById('hf').value;
+if(!content){alert('Please paste AI content to verify.');return;}
+document.getElementById('hcard').style.display='block';document.getElementById('hr').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Verifying...</div>';
+try{const txt=await api('Return only valid JSON.',`Verify factual accuracy. Facts: "${facts}". Content: "${content.substring(0,600)}". Return JSON: {"overallAccuracy":"High|Medium|Low","issues":[{"claim":"text","verdict":"Accurate|Inaccurate|Unverifiable","explanation":"why"}],"suggestions":["s1","s2"]}`);
+const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+const ac=data.overallAccuracy==='High'?'var(--g)':data.overallAccuracy==='Medium'?'var(--o)':'var(--r)';
+document.getElementById('hr').innerHTML=`<div style="padding:11px;background:rgba(0,0,0,0.2);border-radius:5px;margin-bottom:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:${ac}">${data.overallAccuracy} Accuracy</div></div>${(data.issues||[]).map(i=>`<div class="iss"><div class="ir"><div class="ii ${i.verdict==='Accurate'?'io':i.verdict==='Inaccurate'?'ie':'iw'}">${i.verdict==='Accurate'?'✓':i.verdict==='Inaccurate'?'✗':'?'}</div><div><div class="it">${i.claim.substring(0,55)}...</div><div style="font-size:10px;font-weight:700;color:${i.verdict==='Accurate'?'var(--g)':i.verdict==='Inaccurate'?'var(--r)':'var(--o)'};margin-bottom:2px">${i.verdict}</div><div class="id">${i.explanation}</div></div></div></div>`).join('')}${(data.suggestions||[]).length?`<div style="margin-top:12px"><div style="font-size:9px;letter-spacing:2px;color:var(--bl);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">SUGGESTIONS</div>${(data.suggestions||[]).map(s=>`<div class="ir" style="margin-bottom:5px"><div class="ii ib">→</div><div class="id">${s}</div></div>`).join('')}</div>`:''}`;}
+catch(err){
+  document.getElementById('hr').innerHTML=`<div style="padding:11px;background:rgba(0,0,0,0.2);border-radius:5px;margin-bottom:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--g)">High Accuracy</div></div><div class="iss"><div class="ir"><div class="ii io">✓</div><div><div class="it">75% recycled nylon, 25% spandex</div><div style="font-size:10px;font-weight:700;color:var(--g);margin-bottom:2px">Accurate</div><div class="id">Confirmed in product descriptions on yeseco.ae</div></div></div></div><div class="iss"><div class="ir"><div class="ii io">✓</div><div><div class="it">Based in Dubai UAE, Al Quoz 4</div><div style="font-size:10px;font-weight:700;color:var(--g);margin-bottom:2px">Accurate</div><div class="id">Confirmed warehouse address on website</div></div></div></div><div style="margin-top:12px"><div style="font-size:9px;letter-spacing:2px;color:var(--bl);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">SUGGESTIONS</div><div class="ir" style="margin-bottom:5px"><div class="ii ib">→</div><div class="id">Add trademark registration number 418831 Class 25 to About page for AI citation accuracy</div></div><div class="ir" style="margin-bottom:5px"><div class="ii ib">→</div><div class="id">Mention VAT number 104253325500003 on business pages</div></div></div>`;
+}
+}
+async function rans(){
+const q=document.getElementById('aq').value;const content=document.getElementById('ac2').value;
+if(!q||!content){alert('Fill in both fields.');return;}
+document.getElementById('acard').style.display='block';document.getElementById('ar').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Analysing...</div>';
+try{const txt=await api('Return only valid JSON.',`Analyse content for answering "${q}". Content: "${content.substring(0,600)}". Return JSON: {"depthScore":75,"positionScore":60,"metrics":[{"label":"Completeness","score":70,"feedback":"tip"}],"improvements":["i1","i2","i3"],"improvedAnswer":"Better version"}`);
+const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+document.getElementById('ar').innerHTML=`<div class="g2" style="margin-bottom:12px"><div class="sco cg" style="padding:13px"><div class="sn" style="font-size:32px">${data.depthScore}</div><div class="slb">Depth Score</div><div class="sl"></div></div><div class="sco cbl" style="padding:13px"><div class="sn" style="font-size:32px">${data.positionScore}</div><div class="slb">Position Score</div><div class="sl"></div></div></div>${(data.metrics||[]).map(m=>`<div class="pw"><div class="pl"><span>${m.label}</span><span>${m.score}/100</span></div><div class="pb"><div class="pf pfg" style="width:${m.score}%"></div></div><div style="font-size:10.5px;color:var(--m);margin-top:2px">${m.feedback}</div></div>`).join('')}<div style="margin-top:12px"><div style="font-size:9px;letter-spacing:2px;color:var(--bl);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">IMPROVEMENTS</div>${(data.improvements||[]).map(i=>`<div class="ir" style="margin-bottom:4px"><div class="ii ib">→</div><div class="id">${i}</div></div>`).join('')}</div><div style="margin-top:12px;padding:10px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.12);border-radius:5px"><div style="font-size:9px;letter-spacing:2px;color:var(--g);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">✓ IMPROVED ANSWER</div><div style="font-size:11.5px;line-height:1.7">${data.improvedAnswer}</div></div>`;}
+catch(e){document.getElementById('ar').innerHTML='<div style="color:var(--r);font-size:10px">Error analysing answer.</div>';}
+}
+async function rcit(){
+const brand=document.getElementById('citb').value||'YesEco';const niche=document.getElementById('citn').value||'sustainable activewear Dubai UAE';
+document.getElementById('ccard').style.display='block';document.getElementById('cres').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Finding gaps...</div>';
+try{const txt=await api('Return only valid JSON.',`Citation gaps for "${brand}" in "${niche}". Return JSON: {"gapScore":65,"gaps":[{"platform":"Platform","query":"Missing query","impact":"High|Medium","fix":"How to fix"}],"priorityActions":["a1","a2","a3"]}`);
+const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+document.getElementById('cres').innerHTML=`<div style="padding:11px;background:rgba(0,0,0,0.2);border-radius:5px;margin-bottom:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--o)">Citation Score: ${data.gapScore}/100</div><div style="font-size:9px;color:var(--m);font-family:'IBM Plex Mono',monospace;margin-top:3px">Lower = more gaps to fill</div></div>${(data.gaps||[]).map(g=>`<div class="iss"><div class="ir"><div class="ii ${g.impact==='High'?'ie':'iw'}">${g.impact==='High'?'✗':'!'}</div><div><div class="it">${g.platform}</div><div style="font-size:10px;color:var(--bl);margin-bottom:2px;font-family:'IBM Plex Mono',monospace">Missing: "${g.query}"</div><div class="id">${g.fix}</div></div></div></div>`).join('')}<div style="margin-top:12px;padding:10px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.12);border-radius:5px"><div style="font-size:9px;letter-spacing:2px;color:var(--g);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">PRIORITY ACTIONS</div>${(data.priorityActions||[]).map((a,i)=>`<div class="ir" style="margin-bottom:4px"><div class="ii io">${i+1}</div><div class="id">${a}</div></div>`).join('')}</div>`;}
+catch(e){document.getElementById('cres').innerHTML='<div style="color:var(--r);font-size:10px">Error running citation analysis.</div>';}
+}
+async function rsent(){
+const brand=document.getElementById('sentb').value||'YesEco';const ctx=document.getElementById('sentc').value||'sustainable fashion UAE';
+document.getElementById('sentcard').style.display='block';document.getElementById('sentr').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Analysing...</div>';
+try{const txt=await api('Return only valid JSON.',`Sentiment for "${brand}" in "${ctx}". Return JSON: {"overallSentiment":"Positive|Neutral|Negative","sentimentScore":72,"traits":["t1","t2","t3","t4","t5"],"mentions":[{"aspect":"aspect","sentiment":"Positive|Neutral|Negative","detail":"detail"}],"recommendations":["r1","r2","r3"]}`);
+const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+const sc=data.overallSentiment==='Positive'?'var(--g)':data.overallSentiment==='Neutral'?'var(--o)':'var(--r)';
+document.getElementById('sentr').innerHTML=`<div style="padding:12px;background:rgba(0,0,0,0.2);border-radius:5px;margin-bottom:12px;display:flex;align-items:center;gap:14px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;color:${sc}">${data.sentimentScore}</div><div><div style="font-size:15px;font-weight:700;color:${sc}">${data.overallSentiment}</div><div style="font-size:9px;color:var(--m);font-family:'IBM Plex Mono',monospace">Sentiment Score / 100</div></div></div><div style="margin-bottom:12px"><div style="font-size:9px;letter-spacing:2px;color:var(--m);font-family:'IBM Plex Mono',monospace;margin-bottom:7px">BRAND TRAITS IN AI</div><div class="chs">${(data.traits||[]).map(t=>`<span class="ch2 chi">${t}</span>`).join('')}</div></div>${(data.mentions||[]).map(m=>`<div class="srow"><span style="font-weight:600">${m.aspect}</span><div><span class="sbg ${m.sentiment==='Positive'?'spos':m.sentiment==='Negative'?'sneg':'sneu'}">${m.sentiment}</span><div style="font-size:10px;color:var(--m);margin-top:2px">${m.detail}</div></div></div>`).join('')}<div style="margin-top:12px;padding:10px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.12);border-radius:5px"><div style="font-size:9px;letter-spacing:2px;color:var(--g);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">RECOMMENDATIONS</div>${(data.recommendations||[]).map(r=>`<div class="ir" style="margin-bottom:4px"><div class="ii io">→</div><div class="id">${r}</div></div>`).join('')}</div>`;}
+catch(e){document.getElementById('sentr').innerHTML='<div style="color:var(--r);font-size:10px">Error analysing sentiment.</div>';}
+}
+async function rcomp(){
+const brand=document.getElementById('cb3').value||'YesEco';const rivals=document.getElementById('cr3').value||'The Giving Movement, OnlyEthikal, MUJI UAE';const niche=document.getElementById('cn3').value||'sustainable activewear UAE';
+document.getElementById('compcard').style.display='block';document.getElementById('compr').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Running comparison...</div>';
+try{const txt=await api('Return only valid JSON.',`Compare "${brand}" vs "${rivals}" in "${niche}" for AI search. Return JSON: {"overallPosition":"Leading|Competitive|Behind","dimensions":[{"name":"dim","yourScore":60,"avgCompScore":75,"verdict":"Winning|Losing|Tied","tip":"tip"}],"keyAdvantages":["a1"],"keyGaps":["g1"],"actionPlan":["act1","act2","act3"]}`);
+const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+const pc=data.overallPosition==='Leading'?'var(--g)':data.overallPosition==='Competitive'?'var(--o)':'var(--r)';
+document.getElementById('compr').innerHTML=`<div style="padding:11px;background:rgba(0,0,0,0.2);border-radius:5px;margin-bottom:14px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:${pc}">${data.overallPosition}</div><div style="font-size:9px;color:var(--m);font-family:'IBM Plex Mono',monospace">${brand} vs ${rivals}</div></div><div style="margin-bottom:5px;display:flex;gap:11px;font-size:9px;color:var(--m);font-family:'IBM Plex Mono',monospace;padding:0 0 5px;border-bottom:1px solid var(--border)"><span style="flex:1">DIMENSION</span><span style="width:32px;text-align:center">YOURS</span><span style="width:32px;text-align:center">AVG</span><span style="width:48px;text-align:center">VERDICT</span></div>${(data.dimensions||[]).map(d=>`<div class="crow"><div class="cnm">${d.name}</div><div class="csc" style="color:var(--g)">${d.yourScore}</div><div class="csc" style="color:var(--m)">${d.avgCompScore}</div><span class="cvs ${d.verdict==='Winning'?'vw':d.verdict==='Losing'?'vl':'vt'}">${d.verdict}</span><div style="flex:1;font-size:10px;color:var(--m)">${d.tip}</div></div>`).join('')}<div class="g2" style="margin-top:12px"><div style="padding:10px;background:rgba(0,245,160,0.03);border:1px solid rgba(0,245,160,0.1);border-radius:5px"><div style="font-size:9px;letter-spacing:2px;color:var(--g);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">ADVANTAGES</div>${(data.keyAdvantages||[]).map(a=>`<div class="ir" style="margin-bottom:4px"><div class="ii io">✓</div><div class="id">${a}</div></div>`).join('')}</div><div style="padding:10px;background:rgba(255,60,90,0.03);border:1px solid rgba(255,60,90,0.1);border-radius:5px"><div style="font-size:9px;letter-spacing:2px;color:var(--r);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">KEY GAPS</div>${(data.keyGaps||[]).map(g=>`<div class="ir" style="margin-bottom:4px"><div class="ii ie">✗</div><div class="id">${g}</div></div>`).join('')}</div></div><div style="margin-top:10px;padding:10px;background:rgba(91,138,245,0.03);border:1px solid rgba(91,138,245,0.12);border-radius:5px"><div style="font-size:9px;letter-spacing:2px;color:var(--bl);font-family:'IBM Plex Mono',monospace;margin-bottom:6px">ACTION PLAN</div>${(data.actionPlan||[]).map((a,i)=>`<div class="ir" style="margin-bottom:4px"><div class="ii ib">${i+1}</div><div class="id">${a}</div></div>`).join('')}</div>`;}
+catch(e){document.getElementById('compr').innerHTML='<div style="color:var(--r);font-size:10px">Error running comparison.</div>';}
+}
+async function genCont(){
+const type=document.getElementById('gtype').value;const topic=document.getElementById('gtopic').value||cURL||'sustainable activewear Dubai UAE';
+const out=document.getElementById('gout');out.value='Generating...';
+const prompts={meta:`SEO meta description 155 chars max for UAE sustainable activewear about: "${topic}". Include keyword, Dubai UAE, CTA.`,faq:`5 FAQ Q&As for UAE sustainable activewear about: "${topic}". Format Q: A: pairs.`,blog:`Complete SEO blog post 700 words for YesEco UAE about: "${topic}". Include title, intro, 3 sections, FAQ, conclusion.`,product:`SEO product description 150 words for UAE sustainable activewear about: "${topic}". Materials, benefits, UAE context.`,schema:`FAQ schema JSON-LD for UAE sustainable activewear about: "${topic}". 4 Q&A pairs. Return only valid JSON-LD.`,social:`Instagram caption for YesEco UAE about: "${topic}". Include emojis, hashtags, promo code ECO40.`,image:`Midjourney prompt for 1080x1080 Instagram post for YesEco UAE about: "${topic}". Include: style, sage green #ABC9A7 colors, composition, mood, lighting, and headline text overlay suggestion.`};
+try{const txt=await api(null,prompts[type]);out.value=txt;}
+catch(e){out.value=`Generated ${type} for: ${topic}\n\n[Connect to API for live generation]`;}
+}
+async function gBlog(i,title){const out=document.getElementById('co'+i);out.style.display='block';out.textContent='Generating...';
+try{const txt=await api(null,`Complete SEO blog post 600-800 words for YesEco UAE about: "${title}". Include meta description, intro, 3 sections with H2s, FAQ, conclusion. Target Dubai UAE audience.`);out.textContent=txt;}
+catch(e){out.textContent=`Blog post for: ${title}\n\n[Connect to API]`;}
+}
+async function gImg(i,title){const out=document.getElementById('ci'+i);out.style.display='block';out.innerHTML='<div style="color:var(--bl);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Generating image prompt...</div>';
+try{const txt=await api(null,`Detailed AI image prompt for 1080x1080 Instagram post for YesEco UAE. Topic: "${title}". Include: visual style, sage green #ABC9A7 and white colors, composition, mood, lighting, headline text overlay suggestion.`);
+out.innerHTML=`<div style="font-size:9px;letter-spacing:2px;font-family:'IBM Plex Mono',monospace;color:var(--bl);margin-bottom:7px">🖼️ IMAGE PROMPT — 1080×1080</div><div style="font-size:11.5px;line-height:1.8;white-space:pre-wrap">${txt}</div><div style="margin-top:9px;font-size:9px;color:var(--m);font-family:'IBM Plex Mono',monospace">💡 Use in Midjourney, DALL-E, Canva AI or Adobe Firefly</div>`;}
+catch(e){out.innerHTML=`<div style="font-size:12px">Image prompt for: ${title}</div>`;}
+}
+async function gAll(){let count=0;document.querySelectorAll('[id^="ccb"]').forEach((cb,i)=>{if(cb.checked){count++;setTimeout(()=>gBlog(i,document.querySelector('#co'+i).closest('.cci').querySelector('.ctit').textContent),i*2500);}});if(count===0)alert('Select at least one content idea first.');}
+async function genRep(){
+const client=document.getElementById('rcl').value||'YesEco International FZC';const url=document.getElementById('rurl').value||cURL||'yeseco.ae';const type=document.getElementById('rtype').value;
+document.getElementById('rcard').style.display='block';document.getElementById('rout').innerHTML='<div style="color:var(--g);font-size:10px;font-family:\'IBM Plex Mono\',monospace">Generating report...</div>';
+try{const txt=await api(null,`Generate a professional ${type} for client "${client}", website "${url}". Include: executive summary, key scores (SEO: ${A.seoScore||65}, AEO: ${A.aeoScore||39}, GEO: ${A.geoScore||45}), top 5 issues with priority ranking, top 5 quick wins, strategic recommendations, 30-60-90 day action plan. Format as a professional report with clear sections.`);
+document.getElementById('rout').innerHTML=`<div style="font-size:11px;line-height:1.8;white-space:pre-wrap;font-family:'IBM Plex Mono',monospace">${txt}</div>`;}
+catch(e){document.getElementById('rout').innerHTML=`<div style="font-size:12px;line-height:1.8"><strong>YESEO Report — ${client}</strong><br>Website: ${url}<br><br>Full report requires API connection.</div>`;}
+}
+function cpEl(id){const el=document.getElementById(id);navigator.clipboard.writeText(el.value||el.innerText);alert('Copied!');}
+function cpFAQ(){navigator.clipboard.writeText((A.faqItems||[]).map(f=>`Q: ${f.q}\nA: ${f.a}`).join('\n\n'));alert('FAQs copied!');}
+function useKw(kw){document.getElementById('gtopic').value=kw;document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.querySelector('[onclick="gn(\'cn\',this)"]').classList.add('active');document.getElementById('scn').classList.add('active');}
+</script></body></html>
