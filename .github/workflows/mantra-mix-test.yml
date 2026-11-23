@@ -1,0 +1,116 @@
+name: Mantra Mix Test
+
+on:
+  push:
+    branches:
+      - mantra-audio-lab
+    paths:
+      - "mantra_audio/MIX_TRIGGER.txt"
+      - ".github/workflows/mantra-mix-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install audio dependencies
+        run: pip install numpy scipy soundfile requests
+
+      - name: Download approved chant voice
+        run: |
+          python - <<'PY'
+          import requests
+          url = "https://resource2.heygen.ai/text_to_speech/5769a58268d349e9a0ada6adf179aa83/da9659970e9d4250be76c3f628565bc7/id=53984665eea640f091cb85448ab61a3e.wav"
+          r = requests.get(url, timeout=60)
+          r.raise_for_status()
+          open("mantra_audio/voice.wav","wb").write(r.content)
+          print("Downloaded", len(r.content), "bytes")
+          PY
+
+      - name: Mix voice with soft devotional background
+        run: |
+          python - <<'PY'
+          import numpy as np
+          import soundfile as sf
+          from scipy.signal import butter, sosfilt
+
+          voice, sr = sf.read("mantra_audio/voice.wav", always_2d=True)
+          voice = voice.mean(axis=1)
+          n = len(voice)
+          t = np.arange(n)/sr
+
+          # Continuous warm tanpura-like drone, no sharp bell hits.
+          root = 146.83
+          drone = (
+              0.60*np.sin(2*np.pi*root*t) +
+              0.22*np.sin(2*np.pi*(root*1.5)*t) +
+              0.14*np.sin(2*np.pi*(root*2)*t) +
+              0.08*np.sin(2*np.pi*(root/2)*t)
+          )
+
+          # Slowly moving airy pad so the background is continuously audible.
+          pad = (
+              0.34*np.sin(2*np.pi*220.00*t + 0.3) +
+              0.22*np.sin(2*np.pi*293.66*t + 1.1) +
+              0.15*np.sin(2*np.pi*369.99*t + 2.0)
+          )
+          breathing = 0.72 + 0.28*np.sin(2*np.pi*0.055*t - 0.5)
+          bg = (drone + 0.55*pad) * breathing
+
+          # Smooth the bed and remove any metallic/tinny high-frequency edge.
+          sos = butter(4, 1200, btype="low", fs=sr, output="sos")
+          bg = sosfilt(sos, bg)
+
+          # Fade in/out.
+          fade_n = max(1, int(sr*1.2))
+          fade = np.ones(n)
+          fade[:fade_n] = np.linspace(0,1,fade_n)
+          fade[-fade_n:] = np.linspace(1,0,fade_n)
+          bg *= fade
+
+          # Normalize bed, then mix at an audible but gentle level.
+          bg_peak = np.max(np.abs(bg)) or 1.0
+          bg = bg / bg_peak
+
+          # Voice remains dominant. Background approx 16% of full-scale,
+          # enough to hear the continuous music without masking the mantra.
+          voice_peak = np.max(np.abs(voice)) or 1.0
+          voice = voice / max(1.0, voice_peak/0.88)
+          mix = 0.92*voice + 0.16*bg
+
+          peak = np.max(np.abs(mix)) or 1.0
+          if peak > 0.98:
+              mix = mix / peak * 0.98
+
+          out = "mantra_audio/Om_Namah_Shivaya_Voice_With_Soft_Music.wav"
+          sf.write(out, mix, sr, subtype="PCM_16")
+          print("Wrote", out, "duration", len(mix)/sr)
+          PY
+
+      - name: Commit mixed WAV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mantra_audio/Om_Namah_Shivaya_Voice_With_Soft_Music.wav
+          git commit -m "Add mixed Om Namah Shivaya audio" || exit 0
+          git push
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: om-namah-shivaya-soft-mix
+          path: mantra_audio/Om_Namah_Shivaya_Voice_With_Soft_Music.wav
+          retention-days: 7
