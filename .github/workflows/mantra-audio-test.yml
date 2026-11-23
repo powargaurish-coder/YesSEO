@@ -1,0 +1,48 @@
+name: Mantra Audio Test
+
+on:
+  push:
+    branches:
+      - mantra-audio-lab
+    paths:
+      - "mantra_audio/**"
+      - ".github/workflows/mantra-audio-test.yml"
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install CPU PyTorch
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install TTS dependencies
+        run: |
+          pip install git+https://github.com/huggingface/parler-tts.git
+          pip install transformers soundfile numpy safetensors sentencepiece
+
+      - name: Generate Sanskrit WAV masters
+        run: python mantra_audio/generate.py
+
+      - name: Show generated files
+        run: ls -lh mantra_audio/outputs/
+
+      - name: Upload mantra WAVs
+        uses: actions/upload-artifact@v4
+        with:
+          name: mantra-audio-test-wavs
+          path: mantra_audio/outputs/*.wav
+          if-no-files-found: error
+          retention-days: 7
