@@ -25,12 +25,21 @@ jobs:
       - name: Install CPU PyTorch
         run: |
           python -m pip install --upgrade pip
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install torch==2.5.1+cpu torchaudio==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install TTS dependencies
         run: |
           pip install git+https://github.com/huggingface/parler-tts.git
-          pip install transformers soundfile numpy safetensors sentencepiece
+          pip install transformers==4.46.1 soundfile numpy safetensors sentencepiece
+          pip install --force-reinstall --no-deps torchaudio==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Verify CPU audio stack
+        run: |
+          python - <<'PY'
+          import torch, torchaudio
+          print("torch", torch.__version__, "cuda?", torch.cuda.is_available())
+          print("torchaudio", torchaudio.__version__)
+          PY
 
       - name: Generate Sanskrit WAV masters
         run: python mantra_audio/generate.py
