@@ -1,0 +1,109 @@
+name: Devotional 100 Video Factory
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [devotional-100-video-factory]
+    paths:
+      - "devotional_video_factory/**"
+      - ".github/workflows/devotional-100-video-factory.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install system audio dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libsndfile1 ffmpeg
+
+      - name: Clone source text repositories
+        run: |
+          mkdir -p source_texts
+          git clone --depth 1 https://github.com/stotrasamhita/stotra-sangrahah.git source_texts/stotra-sangrahah
+          git clone --depth 1 https://github.com/stotrasamhita/vedamantra-book.git source_texts/vedamantra-book
+          git clone --depth 1 https://github.com/stotrasamhita/namavali-manjari.git source_texts/namavali-manjari
+          git clone --depth 1 https://github.com/kaustubhk24/sangrah.git source_texts/sangrah
+          git clone --depth 1 https://github.com/vexyl-ai/vexyl-tts.git vexyl-tts
+
+      - name: Cache Sanskrit TTS model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: indic-parler-tts-v1
+
+      - name: Set up female Sanskrit TTS
+        run: |
+          bash vexyl-tts/setup.sh
+          vexyl-tts/venv/bin/pip install -q indic-transliteration Unidecode soxr
+
+      - name: Resolve Sanskrit sources and generate female voice masters
+        env:
+          VEXYL_TTS_DEVICE: cpu
+          VEXYL_TTS_DISK_CACHE: "0"
+        run: |
+          vexyl-tts/venv/bin/python devotional_video_factory/prepare_audio.py
+
+      - name: Upload audio masters and source report
+        uses: actions/upload-artifact@v4
+        with:
+          name: devotional-audio-100
+          path: |
+            build_audio/audio/
+            build_audio/meta/
+            build_audio/audio_manifest.json
+            build_audio/source_report.json
+          retention-days: 14
+
+  video:
+    needs: audio
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0,1,2,3,4,5,6,7,8,9]
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-dejavu-core libsndfile1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install renderer packages
+        run: pip install -q numpy soundfile pillow requests
+
+      - name: Download shared audio masters
+        uses: actions/download-artifact@v4
+        with:
+          name: devotional-audio-100
+          path: build_audio
+
+      - name: Render 10 watermark-free multi-image videos
+        env:
+          GROUP: \${{ matrix.group }}
+        run: python devotional_video_factory/render_group.py
+
+      - name: Upload video group
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devotional-videos-group-\${{ matrix.group }}
+          path: rendered_videos/group_*/
+          if-no-files-found: warn
+          retention-days: 14
