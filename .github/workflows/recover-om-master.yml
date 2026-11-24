@@ -41,33 +41,10 @@ jobs:
           y, sr = sf.read(src, always_2d=True)
           y = y.mean(axis=1)
 
-          # Smoothed short-time envelope.
-          win = max(1, int(sr*0.04))
-          env = uniform_filter1d(np.abs(y), size=win)
-          thr = max(0.008, np.percentile(env, 45) * 1.8)
-          active = env > thr
-
-          # Find active regions, merge gaps < 220 ms.
-          idx = np.flatnonzero(np.diff(np.r_[False, active, False]))
-          regions = [(idx[i], idx[i+1]) for i in range(0, len(idx), 2)]
-          merged = []
-          gap_lim = int(sr*0.22)
-          for a,b in regions:
-              if not merged or a-merged[-1][1] > gap_lim:
-                  merged.append([a,b])
-              else:
-                  merged[-1][1] = b
-
-          # Keep phrase-sized segments; fall back to equal 9-way split.
-          phrases = [(a,b) for a,b in merged if 1.0 <= (b-a)/sr <= 4.5]
-          if not phrases:
-              step = len(y)//9
-              phrases = [(0, step)]
-
-          a,b = phrases[0]
-          pad = int(sr*0.08)
-          a=max(0,a-pad); b=min(len(y),b+pad)
-          rep = y[a:b]
+          # The source was generated as exactly 9 repetitions.
+          # Use one full ninth so the entire "Om Namah Shivaya" phrase is retained.
+          step = len(y) // 9
+          rep = y[:step]
 
           # gentle fade
           f=min(int(sr*0.05), len(rep)//4)
@@ -77,12 +54,16 @@ jobs:
 
           out = root / "P1-013_Om_Namah_Shivaya_CORRECTED_FEMALE_1X.wav"
           sf.write(out, rep, sr, subtype="PCM_16")
-          print("phrases", len(phrases), "duration", len(rep)/sr)
+          # Also keep the original 9x source for QC.
+          sf.write(root / "P1-013_Om_Namah_Shivaya_FEMALE_9X_SOURCE.wav", y, sr, subtype="PCM_16")
+          print("duration", len(rep)/sr)
           PY
 
       - name: Upload corrected master
         uses: actions/upload-artifact@v4
         with:
           name: corrected-om-namah-shivaya-master
-          path: mantra_audio/recovered_om/P1-013_Om_Namah_Shivaya_CORRECTED_FEMALE_1X.wav
+          path: |
+            mantra_audio/recovered_om/P1-013_Om_Namah_Shivaya_CORRECTED_FEMALE_1X.wav
+            mantra_audio/recovered_om/P1-013_Om_Namah_Shivaya_FEMALE_9X_SOURCE.wav
           retention-days: 7
