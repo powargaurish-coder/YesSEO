@@ -50,8 +50,24 @@ jobs:
 
       - name: Set up female Sanskrit TTS
         run: |
-          bash vexyl-tts/setup.sh
-          vexyl-tts/venv/bin/pip install -q indic-transliteration Unidecode soxr
+          python -m venv vexyl-tts/venv
+          vexyl-tts/venv/bin/python -m pip install --upgrade pip
+          vexyl-tts/venv/bin/pip install torch==2.5.1+cpu torchaudio==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
+          vexyl-tts/venv/bin/pip install git+https://github.com/huggingface/parler-tts.git
+          vexyl-tts/venv/bin/pip install transformers websockets numpy soundfile huggingface_hub soxr indic-transliteration Unidecode
+          vexyl-tts/venv/bin/pip install --force-reinstall --no-deps torchaudio==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
+          vexyl-tts/venv/bin/python - <<'PY'
+          import torch, torchaudio
+          print("torch", torch.__version__, "cuda?", torch.cuda.is_available())
+          print("torchaudio", torchaudio.__version__)
+          from parler_tts import ParlerTTSForConditionalGeneration
+          from transformers import AutoTokenizer
+          print("Downloading model...")
+          model = ParlerTTSForConditionalGeneration.from_pretrained("ai4bharat/indic-parler-tts")
+          AutoTokenizer.from_pretrained("ai4bharat/indic-parler-tts")
+          AutoTokenizer.from_pretrained(model.config.text_encoder._name_or_path)
+          print("Female Sanskrit TTS setup verified")
+          PY
 
       - name: Resolve Sanskrit sources and generate female voice masters
         env:
