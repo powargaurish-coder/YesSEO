@@ -1,0 +1,902 @@
+[
+  {
+    "id": "P1-001",
+    "deity": "Ganesha",
+    "title": "Vakratunda Mahakaya Shloka",
+    "type": "sloka",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-002",
+    "deity": "Ganesha",
+    "title": "Ganesha Gayatri Mantra",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-003",
+    "deity": "Ganesha",
+    "title": "Ganapati Atharvashirsha",
+    "type": "upanishadic hymn",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-004",
+    "deity": "Ganesha",
+    "title": "Ganesha Pancharatnam",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-005",
+    "deity": "Ganesha",
+    "title": "Ganesha Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-006",
+    "deity": "Ganesha",
+    "title": "Ganesha Dvadasha Nama Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-007",
+    "deity": "Ganesha",
+    "title": "Sankata Nashana Ganesha Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-008",
+    "deity": "Ganesha",
+    "title": "Ganesha Bhujanga Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-009",
+    "deity": "Ganesha",
+    "title": "Ganesha Kavacha",
+    "type": "kavacha",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-010",
+    "deity": "Ganesha",
+    "title": "Ganesha Mangalashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-011",
+    "deity": "Ganesha",
+    "title": "Ganesha Pratah Smaranam",
+    "type": "morning prayer",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-012",
+    "deity": "Ganesha",
+    "title": "Ganesha Namavali - selected names",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-013",
+    "deity": "Shiva",
+    "title": "Om Namah Shivaya",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-014",
+    "deity": "Shiva",
+    "title": "Mahamrityunjaya Mantra",
+    "type": "vedic mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-015",
+    "deity": "Shiva",
+    "title": "Shiva Panchakshara Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-016",
+    "deity": "Shiva",
+    "title": "Shiva Shadakshara Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-017",
+    "deity": "Shiva",
+    "title": "Lingashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-018",
+    "deity": "Shiva",
+    "title": "Bilvashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-019",
+    "deity": "Shiva",
+    "title": "Rudrashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-020",
+    "deity": "Shiva",
+    "title": "Shiva Manasa Puja",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-021",
+    "deity": "Shiva",
+    "title": "Shiva Tandava Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-022",
+    "deity": "Shiva",
+    "title": "Chandrashekhara Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-023",
+    "deity": "Shiva",
+    "title": "Kalabhairava Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-024",
+    "deity": "Shiva",
+    "title": "Dakshinamurti Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-025",
+    "deity": "Shiva",
+    "title": "Ardhanarishvara Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-026",
+    "deity": "Shiva",
+    "title": "Shiva Mahimna Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-027",
+    "deity": "Shiva",
+    "title": "Vishwanatha Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-028",
+    "deity": "Shiva",
+    "title": "Shiva Pratah Smaranam",
+    "type": "morning prayer",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-029",
+    "deity": "Shiva",
+    "title": "Shiva Aparadha Kshamapana Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-030",
+    "deity": "Shiva",
+    "title": "Rudra Namakam - selected chantable sections",
+    "type": "vedic hymn",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-031",
+    "deity": "Vishnu",
+    "title": "Om Namo Narayanaya",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-032",
+    "deity": "Vishnu",
+    "title": "Om Namo Bhagavate Vasudevaya",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-033",
+    "deity": "Vishnu",
+    "title": "Vishnu Sahasranama - selected names",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-034",
+    "deity": "Vishnu",
+    "title": "Vishnu Shatpadi Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-035",
+    "deity": "Vishnu",
+    "title": "Vishnu Panchayudha Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-036",
+    "deity": "Vishnu",
+    "title": "Narayana Kavacha - selected verses",
+    "type": "kavacha",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-037",
+    "deity": "Vishnu",
+    "title": "Narayana Suktam",
+    "type": "vedic hymn",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-038",
+    "deity": "Vishnu",
+    "title": "Purusha Suktam - selected verses",
+    "type": "vedic hymn",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-039",
+    "deity": "Vishnu",
+    "title": "Vishnu Gayatri",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-040",
+    "deity": "Vishnu",
+    "title": "Achyutashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-041",
+    "deity": "Vishnu",
+    "title": "Mukunda Mala - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-042",
+    "deity": "Vishnu",
+    "title": "Vishnu Pratah Smaranam",
+    "type": "morning prayer",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-043",
+    "deity": "Vishnu",
+    "title": "Vishnu Mangalashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-044",
+    "deity": "Vishnu",
+    "title": "Vishnu Bhujanga Prayata Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-045",
+    "deity": "Vishnu",
+    "title": "Vishnu Panjara Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-046",
+    "deity": "Krishna",
+    "title": "Hare Krishna Maha Mantra",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-047",
+    "deity": "Krishna",
+    "title": "Krishna Gayatri",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-048",
+    "deity": "Krishna",
+    "title": "Govinda Damodara Madhaveti",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-049",
+    "deity": "Krishna",
+    "title": "Madhurashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-050",
+    "deity": "Krishna",
+    "title": "Krishnashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-051",
+    "deity": "Krishna",
+    "title": "Gopala Sahasranama - selected names",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-052",
+    "deity": "Krishna",
+    "title": "Damodarashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-053",
+    "deity": "Krishna",
+    "title": "Govindashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-054",
+    "deity": "Krishna",
+    "title": "Krishna Anusmriti - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-055",
+    "deity": "Krishna",
+    "title": "Mukunda Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-056",
+    "deity": "Krishna",
+    "title": "Radha Krishna Nama Japa",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-057",
+    "deity": "Krishna",
+    "title": "Vasudeva Dvadasha Nama - selected names",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-058",
+    "deity": "Rama",
+    "title": "Shri Rama Jaya Rama Jaya Jaya Rama",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-059",
+    "deity": "Rama",
+    "title": "Rama Taraka Mantra",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-060",
+    "deity": "Rama",
+    "title": "Rama Gayatri",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-061",
+    "deity": "Rama",
+    "title": "Shri Rama Raksha Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-062",
+    "deity": "Rama",
+    "title": "Rama Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-063",
+    "deity": "Rama",
+    "title": "Rama Bhujanga Prayata Stotra",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-064",
+    "deity": "Rama",
+    "title": "Rama Dvadasha Nama",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-065",
+    "deity": "Rama",
+    "title": "Rama Pratah Smaranam",
+    "type": "morning prayer",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-066",
+    "deity": "Rama",
+    "title": "Sita Rama Nama Japa",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-067",
+    "deity": "Rama",
+    "title": "Rama Mangalashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-068",
+    "deity": "Hanuman",
+    "title": "Om Hanumate Namah",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-069",
+    "deity": "Hanuman",
+    "title": "Hanuman Gayatri",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-070",
+    "deity": "Hanuman",
+    "title": "Hanuman Chalisa - selected chaupais",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-071",
+    "deity": "Hanuman",
+    "title": "Bajrang Baan - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-072",
+    "deity": "Hanuman",
+    "title": "Hanuman Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-073",
+    "deity": "Hanuman",
+    "title": "Hanuman Bahuk - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-074",
+    "deity": "Hanuman",
+    "title": "Anjaneya Dvadasha Nama",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-075",
+    "deity": "Hanuman",
+    "title": "Hanuman Kavacha - selected verses",
+    "type": "kavacha",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-076",
+    "deity": "Hanuman",
+    "title": "Hanuman Mangalashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-077",
+    "deity": "Hanuman",
+    "title": "Sundarakanda Rama-Hanuman selected shlokas",
+    "type": "sloka",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-078",
+    "deity": "Durga",
+    "title": "Om Dum Durgayai Namah",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-079",
+    "deity": "Durga",
+    "title": "Durga Gayatri",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-080",
+    "deity": "Durga",
+    "title": "Ya Devi Sarva Bhuteshu - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-081",
+    "deity": "Durga",
+    "title": "Sarva Mangala Mangalye",
+    "type": "sloka",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-082",
+    "deity": "Durga",
+    "title": "Durga Saptashloki",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-083",
+    "deity": "Durga",
+    "title": "Argala Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-084",
+    "deity": "Durga",
+    "title": "Kilaka Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-085",
+    "deity": "Durga",
+    "title": "Devi Kavacha - selected verses",
+    "type": "kavacha",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-086",
+    "deity": "Durga",
+    "title": "Durga Ashtottara Shatanama - selected names",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-087",
+    "deity": "Durga",
+    "title": "Durga Aparadha Kshamapana Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-088",
+    "deity": "Durga",
+    "title": "Mahishasura Mardini Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-089",
+    "deity": "Durga",
+    "title": "Devi Suktam - selected verses",
+    "type": "vedic hymn",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-090",
+    "deity": "Durga",
+    "title": "Bhavani Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-091",
+    "deity": "Durga",
+    "title": "Durga Pratah Smaranam",
+    "type": "morning prayer",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-092",
+    "deity": "Durga",
+    "title": "Durga Mangalashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-093",
+    "deity": "Lakshmi",
+    "title": "Om Shreem Mahalakshmyai Namah",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-094",
+    "deity": "Lakshmi",
+    "title": "Lakshmi Gayatri",
+    "type": "mantra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-095",
+    "deity": "Lakshmi",
+    "title": "Sri Suktam - selected verses",
+    "type": "vedic hymn",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-096",
+    "deity": "Lakshmi",
+    "title": "Kanakadhara Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-097",
+    "deity": "Lakshmi",
+    "title": "Mahalakshmi Ashtakam",
+    "type": "ashtakam",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-098",
+    "deity": "Lakshmi",
+    "title": "Lakshmi Ashtottara Shatanama - selected names",
+    "type": "namavali",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-099",
+    "deity": "Lakshmi",
+    "title": "Lakshmi Pratah Smaranam",
+    "type": "morning prayer",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  },
+  {
+    "id": "P1-100",
+    "deity": "Lakshmi",
+    "title": "Gajalakshmi Stotra - selected verses",
+    "type": "stotra",
+    "repetitions": 11,
+    "images_per_video": 9,
+    "format": "16:9"
+  }
+]
