@@ -50,23 +50,14 @@ jobs:
 
       - name: Set up female Sanskrit TTS
         run: |
-          python -m venv vexyl-tts/venv
-          vexyl-tts/venv/bin/python -m pip install --upgrade pip
-          vexyl-tts/venv/bin/pip install torch==2.5.1+cpu torchaudio==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
-          vexyl-tts/venv/bin/pip install git+https://github.com/huggingface/parler-tts.git
-          vexyl-tts/venv/bin/pip install transformers websockets numpy soundfile huggingface_hub soxr indic-transliteration Unidecode
-          vexyl-tts/venv/bin/pip install --force-reinstall --no-deps torchaudio==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
-          vexyl-tts/venv/bin/python - <<'PY'
-          import torch, torchaudio
-          print("torch", torch.__version__, "cuda?", torch.cuda.is_available())
-          print("torchaudio", torchaudio.__version__)
-          from parler_tts import ParlerTTSForConditionalGeneration
-          from transformers import AutoTokenizer
-          print("Downloading model...")
-          model = ParlerTTSForConditionalGeneration.from_pretrained("ai4bharat/indic-parler-tts")
-          AutoTokenizer.from_pretrained("ai4bharat/indic-parler-tts")
-          AutoTokenizer.from_pretrained(model.config.text_encoder._name_or_path)
-          print("Female Sanskrit TTS setup verified")
+          python -m venv tts-venv
+          tts-venv/bin/python -m pip install --upgrade pip
+          tts-venv/bin/pip install ninada indic-transliteration Unidecode
+          tts-venv/bin/python - <<'PY'
+          from ninada import Ninada
+          tts=Ninada(lang="sa")
+          wav=tts.speak("सत्यमेव जयते नानृतम्",lang="sa",voice="female")
+          print("Ninada Sanskrit female voice verified", len(wav))
           PY
 
       - name: Resolve Sanskrit sources and generate female voice masters
@@ -74,7 +65,7 @@ jobs:
           VEXYL_TTS_DEVICE: cpu
           VEXYL_TTS_DISK_CACHE: "0"
         run: |
-          vexyl-tts/venv/bin/python devotional_video_factory/prepare_audio.py
+          tts-venv/bin/python devotional_video_factory/prepare_audio.py
 
       - name: Upload audio masters and source report
         uses: actions/upload-artifact@v4
