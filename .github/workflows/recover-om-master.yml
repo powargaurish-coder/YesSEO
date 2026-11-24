@@ -1,0 +1,88 @@
+name: Recover Corrected Om Namah Shivaya Master
+
+on:
+  push:
+    branches: [mantra-audio-lab]
+    paths:
+      - ".github/workflows/recover-om-master.yml"
+  workflow_dispatch:
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install audio libs
+        run: pip install numpy soundfile scipy requests
+
+      - name: Recover clean single repetition
+        run: |
+          python - <<'PY'
+          import requests, numpy as np, soundfile as sf
+          from scipy.ndimage import uniform_filter1d
+          from pathlib import Path
+
+          url = "https://resource2.heygen.ai/text_to_speech/5769a58268d349e9a0ada6adf179aa83/da9659970e9d4250be76c3f628565bc7/id=53984665eea640f091cb85448ab61a3e.wav"
+          root = Path("mantra_audio/recovered_om")
+          root.mkdir(parents=True, exist_ok=True)
+          src = root / "female_9x.wav"
+          r = requests.get(url, timeout=60)
+          r.raise_for_status()
+          src.write_bytes(r.content)
+
+          y, sr = sf.read(src, always_2d=True)
+          y = y.mean(axis=1)
+
+          # Smoothed short-time envelope.
+          win = max(1, int(sr*0.04))
+          env = uniform_filter1d(np.abs(y), size=win)
+          thr = max(0.008, np.percentile(env, 45) * 1.8)
+          active = env > thr
+
+          # Find active regions, merge gaps < 220 ms.
+          idx = np.flatnonzero(np.diff(np.r_[False, active, False]))
+          regions = [(idx[i], idx[i+1]) for i in range(0, len(idx), 2)]
+          merged = []
+          gap_lim = int(sr*0.22)
+          for a,b in regions:
+              if not merged or a-merged[-1][1] > gap_lim:
+                  merged.append([a,b])
+              else:
+                  merged[-1][1] = b
+
+          # Keep phrase-sized segments; fall back to equal 9-way split.
+          phrases = [(a,b) for a,b in merged if 1.0 <= (b-a)/sr <= 4.5]
+          if not phrases:
+              step = len(y)//9
+              phrases = [(0, step)]
+
+          a,b = phrases[0]
+          pad = int(sr*0.08)
+          a=max(0,a-pad); b=min(len(y),b+pad)
+          rep = y[a:b]
+
+          # gentle fade
+          f=min(int(sr*0.05), len(rep)//4)
+          if f>0:
+              rep[:f] *= np.linspace(0,1,f)
+              rep[-f:] *= np.linspace(1,0,f)
+
+          out = root / "P1-013_Om_Namah_Shivaya_CORRECTED_FEMALE_1X.wav"
+          sf.write(out, rep, sr, subtype="PCM_16")
+          print("phrases", len(phrases), "duration", len(rep)/sr)
+          PY
+
+      - name: Upload corrected master
+        uses: actions/upload-artifact@v4
+        with:
+          name: corrected-om-namah-shivaya-master
+          path: mantra_audio/recovered_om/P1-013_Om_Namah_Shivaya_CORRECTED_FEMALE_1X.wav
+          retention-days: 7
