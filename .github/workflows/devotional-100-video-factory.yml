@@ -84,8 +84,33 @@ jobs:
             build_audio/source_report.json
           retention-days: 14
 
+  visuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install visual cache packages
+        run: pip install -q pillow requests
+
+      - name: Cache deity visual packs serially
+        run: python devotional_video_factory/prefetch_visuals.py
+
+      - name: Upload cached deity visuals
+        uses: actions/upload-artifact@v4
+        with:
+          name: devotional-visual-assets
+          path: visual_assets/
+          retention-days: 14
+
   video:
-    needs: audio
+    needs: [audio, visuals]
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
@@ -115,6 +140,12 @@ jobs:
         with:
           name: devotional-audio-100
           path: build_audio
+
+      - name: Download cached deity visuals
+        uses: actions/download-artifact@v4
+        with:
+          name: devotional-visual-assets
+          path: visual_assets
 
       - name: Render 10 watermark-free multi-image videos
         env:
