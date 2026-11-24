@@ -216,16 +216,11 @@ def main():
     resolved=[x for x in report if x["status"]!="UNRESOLVED"]
     if len(resolved)<90:raise SystemExit(f"Only {len(resolved)}/100 passages resolved; refusing recording.")
 
-    sys.path.insert(0,str(REPO_ROOT/"vexyl-tts"))
-    os.environ["VEXYL_TTS_DEVICE"]="cpu"; os.environ["VEXYL_TTS_DISK_CACHE"]="0"
-    import vexyl_tts_server as vt
-    vt.load_model()
-    desc=("Vasudha speaks in a very soft, serene Indian devotional tone, warm and peaceful, slightly slow-paced, "
-          "with careful Sanskrit pronunciation and a gentle chant-like cadence. The voice is soothing for daily meditation "
-          "and repeat listening. The recording is clean with no background noise.")
+    from ninada import Ninada
+    tts=Ninada(lang="sa")
     for item in resolved:
         print("AUDIO",item["id"],item["title"],flush=True)
-        wav_bytes,sr=vt._synthesize_sync(item["devanagari"],"sa-IN","warm",desc)
+        wav_bytes=tts.speak(item["devanagari"],lang="sa",voice="female")
         (AUDIO/f"{item['id']}.wav").write_bytes(wav_bytes)
     (OUT/"audio_manifest.json").write_text(json.dumps(resolved,ensure_ascii=False,indent=2),encoding="utf-8")
     print("Completed",len(resolved),"audio masters")
