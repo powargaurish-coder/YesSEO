@@ -8,14 +8,15 @@ on:
       - ".github/workflows/sanskrit-chant-batch-01.yml"
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   render:
     if: github.actor != 'github-actions[bot]'
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0, 1, 2, 3]
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 90
 
     steps:
       - name: Checkout
@@ -36,23 +37,29 @@ jobs:
           pip install cowchant
           pip install scipy soundfile numpy
 
-      - name: Render and mix verified chants
+      - name: Render and mix group
+        env:
+          GROUP: ${{ matrix.group }}
         run: |
           python - <<'PY'
-          import json, os, re, subprocess, sys
+          import json, os, re, subprocess
           from pathlib import Path
           import numpy as np
           import soundfile as sf
           from scipy.signal import butter, sosfilt
 
           root = Path("mantra_audio")
-          raw_dir = root / "batch01_raw"
-          mix_dir = root / "batch01_mixed"
+          group = int(os.environ["GROUP"])
+          raw_dir = root / f"batch01_raw_g{group}"
+          mix_dir = root / f"batch01_mixed_g{group}"
           raw_dir.mkdir(exist_ok=True)
           mix_dir.mkdir(exist_ok=True)
 
           with open(root / "verified_batch_01.json", encoding="utf-8") as f:
-              items = json.load(f)
+              all_items = json.load(f)
+
+          start = group * 4
+          items = all_items[start:start+4]
 
           def safe(s):
               return re.sub(r"[^A-Za-z0-9_-]+", "_", s).strip("_")
@@ -83,26 +90,24 @@ jobs:
               peak = np.max(np.abs(bg)) or 1.0
               return bg/peak
 
-          for i, item in enumerate(items, 1):
+          for offset, item in enumerate(items, 1):
               base = f'{item["id"]}_{safe(item["name"])}'
               raw = raw_dir / f"{base}.wav"
               out = mix_dir / f"{base}_SOFT_MUSIC.wav"
+              print(f"[group {group} {offset}/{len(items)}] Rendering {item['id']} {item['name']}", flush=True)
 
-              print(f"[{i}/{len(items)}] Rendering {item['id']} {item['name']}", flush=True)
-              cmd = [
+              subprocess.run([
                   "cowchant", item["text"],
                   "--device", "cpu",
                   "--speed", "0.84",
-                  "--seed", str(60+i),
+                  "--seed", str(60 + start + offset),
                   "-o", str(raw),
-              ]
-              subprocess.run(cmd, check=True)
+              ], check=True)
 
               voice, sr = sf.read(raw, always_2d=True)
               voice = voice.mean(axis=1)
               bg = music_bed(len(voice), sr)
 
-              # Softer vocal feel, slightly louder background than prior Shiva test.
               vpk = np.max(np.abs(voice)) or 1.0
               voice = voice / vpk * 0.78
               mix = voice + 0.22*bg
@@ -112,28 +117,20 @@ jobs:
                   mix = mix/peak*0.97
               sf.write(out, mix, sr, subtype="PCM_16")
               print(f"Wrote {out}", flush=True)
-
-          print("Batch complete", flush=True)
           PY
 
-      - name: Package outputs
+      - name: Package group
+        env:
+          GROUP: ${{ matrix.group }}
         run: |
           cd mantra_audio
-          zip -j Sanskrit_Chant_Batch_01_Mixed.zip batch01_mixed/*.wav
-
-      - name: Commit package
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mantra_audio/Sanskrit_Chant_Batch_01_Mixed.zip
-          git commit -m "Add Sanskrit chant batch 01 mixed audio" || exit 0
-          git push
+          zip -j "Sanskrit_Chant_Batch_01_Group_${GROUP}.zip" "batch01_mixed_g${GROUP}"/*.wav
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sanskrit-chant-batch-01-mixed
+          name: sanskrit-chant-batch-01-group-${{ matrix.group }}
           path: |
-            mantra_audio/batch01_mixed/*.wav
-            mantra_audio/Sanskrit_Chant_Batch_01_Mixed.zip
+            mantra_audio/batch01_mixed_g${{ matrix.group }}/*.wav
+            mantra_audio/Sanskrit_Chant_Batch_01_Group_${{ matrix.group }}.zip
           retention-days: 7
