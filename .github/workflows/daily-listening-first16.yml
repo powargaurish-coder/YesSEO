@@ -1,0 +1,225 @@
+name: Daily Listening First 16 - 21x 108x
+
+on:
+  push:
+    branches: [mantra-audio-lab]
+    paths:
+      - ".github/workflows/daily-listening-first16.yml"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  render:
+    strategy:
+      fail-fast: false
+      matrix:
+        index: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download successful source artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 45343442422
+          pattern: sanskrit-chant-batch-01-group-*
+          merge-multiple: true
+          path: sources
+
+      - name: Download recovered group-0 sources
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 45363647943
+          pattern: sanskrit-group0-single-*
+          merge-multiple: true
+          path: sources
+
+      - name: Install media dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core
+          python -m pip install --upgrade pip
+          pip install numpy soundfile pillow requests
+
+      - name: Build one mantra in daily-listening format
+        env:
+          INDEX: ${{ matrix.index }}
+        run: |
+          python - <<'PY'
+          import os, re, glob, subprocess, requests
+          from pathlib import Path
+          import numpy as np, soundfile as sf
+          from PIL import Image, ImageDraw, ImageFont
+
+          items = [
+            ("P1-001","Vakratunda_Mahakaya","ganesha"),
+            ("P1-002","Ganesha_Gayatri","ganesha"),
+            ("P1-003","Ganapati_Atharvashirsha_Opening","ganesha"),
+            ("P1-004","Ganesha_Pancharatnam_Opening","ganesha"),
+            ("P1-006","Ganesha_Dvadasha_Nama","ganesha"),
+            ("P1-007","Sankata_Nashana_Ganesha_Opening","ganesha"),
+            ("P1-010","Ganesha_Mangalashtakam_Opening","ganesha"),
+            ("P1-011","Ganesha_Pratah_Smaranam","ganesha"),
+            ("P1-013","Om_Namah_Shivaya","shiva"),
+            ("P1-014","Mahamrityunjaya_Mantra","shiva"),
+            ("P1-015","Shiva_Panchakshara_Opening","shiva"),
+            ("P1-016","Shiva_Shadakshara_Opening","shiva"),
+            ("P1-017","Lingashtakam_Opening","shiva"),
+            ("P1-018","Bilvashtakam_Opening","shiva"),
+            ("P1-019","Rudrashtakam_Opening","shiva"),
+            ("P1-020","Shiva_Manasa_Puja_Opening","shiva"),
+          ]
+          idx=int(os.environ["INDEX"])
+          pid,name,deity=items[idx]
+          out=Path("output"); out.mkdir(exist_ok=True)
+
+          # Source voice.
+          if pid=="P1-013":
+              # Historical approved female source: 9 repetitions with explicit "ओम्".
+              url="https://resource2.heygen.ai/text_to_speech/5769a58268d349e9a0ada6adf179aa83/da9659970e9d4250be76c3f628565bc7/id=53984665eea640f091cb85448ab61a3e.wav"
+              b=requests.get(url,timeout=60); b.raise_for_status()
+              Path("female9x.wav").write_bytes(b.content)
+              y,sr=sf.read("female9x.wav",always_2d=True); y=y.mean(axis=1)
+              one=y[:len(y)//9]
+              src=Path("P1-013_CORRECTED_FEMALE_1X.wav")
+              sf.write(src,one,sr,subtype="PCM_16")
+          else:
+              matches=list(Path("sources").rglob(f"{pid}_*_SOFT_MUSIC.wav"))
+              if not matches:
+                  raise FileNotFoundError(f"source not found for {pid}")
+              src=matches[0]
+
+          # Music bed: clearly audible, smooth, no metallic bell.
+          sr=44100; dur=36.0; n=int(sr*dur); t=np.arange(n)/sr
+          root=146.83 if deity=="ganesha" else 138.59
+          drone=(.42*np.sin(2*np.pi*root*t)+.16*np.sin(2*np.pi*root*1.5*t+.35)
+                 +.10*np.sin(2*np.pi*root*2*t+1.1)+.06*np.sin(2*np.pi*(root/2)*t+.7))
+          pad=(.14*np.sin(2*np.pi*root*1.25*t+.2)+.11*np.sin(2*np.pi*root*1.6667*t+1.4)
+               +.07*np.sin(2*np.pi*root*2.5*t+2.0))
+          music=(drone+pad)*(.78+.22*np.sin(2*np.pi*.032*t-.4)**2)
+          ratios=[1,5/4,4/3,3/2,4/3,5/4] if deity=="ganesha" else [1,6/5,4/3,3/2,4/3,6/5]
+          pos=1.0; k=0
+          while pos<dur-1:
+              m=min(int(2.5*sr),n-int(pos*sr)); tt=np.arange(m)/sr
+              freq=root*2*ratios[k%len(ratios)]
+              vib=.004*np.sin(2*np.pi*5.1*tt)
+              phase=2*np.pi*freq*np.cumsum(1+vib)/sr
+              fl=.14*np.sin(phase)+.035*np.sin(2*phase)
+              env=np.ones(m); a=min(int(.28*sr),m//3); r=min(int(.5*sr),m//3)
+              env[:a]=np.linspace(0,1,a); env[-r:]=np.linspace(1,0,r)
+              i=int(pos*sr); music[i:i+m]+=fl*env
+              pos+=5.8; k+=1
+          f=int(.7*sr); music[:f]*=np.linspace(0,1,f); music[-f:]*=np.linspace(1,0,f)
+          music/=np.max(np.abs(music)) or 1
+          bed=Path("music.wav"); sf.write(bed,music*.70,sr,subtype="PCM_16")
+
+          # Deity-specific devotional background.
+          W,H=1280,720
+          top=(55,18,20) if deity=="ganesha" else (7,14,34)
+          bottom=(155,70,24) if deity=="ganesha" else (30,68,105)
+          accent=(255,210,110) if deity=="ganesha" else (220,238,255)
+          arr=np.zeros((H,W,3),dtype=np.uint8)
+          for yy in range(H):
+              a=yy/(H-1); arr[yy,:,:]=(np.array(top)*(1-a)+np.array(bottom)*a).astype(np.uint8)
+          im=Image.fromarray(arr); dr=ImageDraw.Draw(im,"RGBA")
+          cx,cy=W//2,H//2-30
+          for rr,aa in [(300,18),(230,25),(160,34)]:
+              dr.ellipse([cx-rr,cy-rr,cx+rr,cy+rr],fill=(*accent,aa))
+          try:
+              dev=ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf",72)
+          except: dev=ImageFont.load_default()
+          try:
+              lat=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",28)
+          except: lat=ImageFont.load_default()
+          if deity=="ganesha":
+              title="श्री गणेश"
+              dr.polygon([(640,110),(590,180),(690,180)],fill=(*accent,190))
+              dr.ellipse([455,195,590,405],outline=(*accent,210),width=8)
+              dr.ellipse([690,195,825,405],outline=(*accent,210),width=8)
+              dr.ellipse([555,170,725,370],outline=(*accent,225),width=9)
+              dr.arc([605,285,700,500],250,80,fill=(*accent,230),width=11)
+          else:
+              title="ॐ नमः शिवाय"
+              x=260; dr.line((x,165,x,545),fill=(*accent,220),width=8)
+              dr.line((x,205,x-60,145),fill=(*accent,220),width=8)
+              dr.line((x,205,x+60,145),fill=(*accent,220),width=8)
+              mx,my=1025,120
+              dr.ellipse([mx-50,my-50,mx+50,my+50],fill=(*accent,220))
+              dr.ellipse([mx-20,my-62,mx+72,my+38],fill=(*top,255))
+          bb=dr.textbbox((0,0),title,font=dev); tw=bb[2]-bb[0]
+          dr.text(((W-tw)//2,260),title,font=dev,fill=(*accent,245))
+          sub="Daily Devotional • Soft Chant • Meditation"
+          bb=dr.textbbox((0,0),sub,font=lat); sw=bb[2]-bb[0]
+          dr.text(((W-sw)//2,385),sub,font=lat,fill=(240,242,245,220))
+          footer="Ananta Bhakti Mantras"
+          bb=dr.textbbox((0,0),footer,font=lat); fw=bb[2]-bb[0]
+          dr.text(((W-fw)//2,675),footer,font=lat,fill=(235,238,245,170))
+          bg=Path("background.png"); im.save(bg)
+
+          for count in (21,108):
+              label=f"{pid}_{name}_{count}X_DAILY_LISTENING"
+              mp3=out/f"{label}.mp3"; mp4=out/f"{label}.mp4"
+              subprocess.run([
+                  "ffmpeg","-y","-loglevel","error",
+                  "-stream_loop",str(count-1),"-i",str(src),
+                  "-stream_loop","-1","-i",str(bed),
+                  "-filter_complex",
+                  "[0:a]volume=0.88,aecho=0.8:0.88:80|170:0.08|0.04[v];"
+                  "[1:a]volume=0.34[m];"
+                  "[v][m]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95[out]",
+                  "-map","[out]","-c:a","libmp3lame","-b:a","160k",str(mp3)
+              ],check=True)
+              subprocess.run([
+                  "ffmpeg","-y","-loglevel","error",
+                  "-loop","1","-framerate","0.2","-i",str(bg),"-i",str(mp3),
+                  "-c:v","libx264","-preset","ultrafast","-tune","stillimage","-crf","34",
+                  "-pix_fmt","yuv420p","-c:a","aac","-b:a","128k",
+                  "-shortest","-movflags","+faststart",str(mp4)
+              ],check=True)
+          PY
+
+      - name: Upload mantra artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-listening-${{ matrix.index }}
+          path: output/*
+          retention-days: 7
+
+  package:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Download all rendered outputs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: daily-listening-*
+          merge-multiple: true
+          path: final
+
+      - name: Create package
+        run: |
+          cat > final/README.txt <<'EOF'
+          ANANTA BHAKTI MANTRAS — FIRST 16 DAILY-LISTENING COLLECTION
+          21x + 108x audio and video.
+          Softer chant treatment, audible tanpura/pad/flute music, light vocal space.
+          P1-013 uses corrected female Om Namah Shivaya source with Om present.
+          Ganesha and Shiva receive deity-specific visual treatments.
+          EOF
+          cd final
+          zip -r ../Ananta_Bhakti_First_16_Daily_Listening_21X_108X.zip .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ananta-Bhakti-First-16-Complete-Package
+          path: Ananta_Bhakti_First_16_Daily_Listening_21X_108X.zip
+          retention-days: 7
