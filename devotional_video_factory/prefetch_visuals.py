@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, time, re, requests
+import json, time, re, requests, os
 from pathlib import Path
 from PIL import Image
 
@@ -38,7 +38,9 @@ def get_bytes(url):
         r.raise_for_status(); return r.content
     raise RuntimeError("Wikimedia image download remained rate-limited")
 
-for deity,queries in QUERIES.items():
+only=os.getenv("DEITY_ONLY","").strip()
+items=[(k,v) for k,v in QUERIES.items() if not only or k.lower()==only.lower()]
+for deity,queries in items:
     d=OUT/deity; d.mkdir(parents=True,exist_ok=True)
     seen=set(); candidates=[]
     for q in queries:
