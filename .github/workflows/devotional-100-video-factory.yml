@@ -118,14 +118,14 @@ jobs:
 
       - name: Render 10 watermark-free multi-image videos
         env:
-          GROUP: \${{ matrix.group }}
+          GROUP: ${{ matrix.group }}
         run: python devotional_video_factory/render_group.py
 
       - name: Upload video group
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: devotional-videos-group-\${{ matrix.group }}
+          name: devotional-videos-group-${{ matrix.group }}
           path: rendered_videos/group_*/
           if-no-files-found: warn
           retention-days: 14
