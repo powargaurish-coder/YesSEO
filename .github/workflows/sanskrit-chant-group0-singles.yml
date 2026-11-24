@@ -1,0 +1,113 @@
+name: Sanskrit Chant Group 0 Singles
+
+on:
+  push:
+    branches: [mantra-audio-lab]
+    paths:
+      - ".github/workflows/sanskrit-chant-group0-singles.yml"
+  workflow_dispatch:
+
+jobs:
+  render:
+    strategy:
+      fail-fast: false
+      matrix:
+        index: [0, 1, 2, 3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install CPU PyTorch
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch==2.4.1+cpu torchaudio==2.4.1+cpu --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install Sanskrit chant engine
+        run: |
+          pip install cowchant
+          pip install scipy soundfile numpy
+
+      - name: Render one chant
+        env:
+          INDEX: ${{ matrix.index }}
+        run: |
+          python - <<'PY'
+          import json, os, re, subprocess
+          from pathlib import Path
+          import numpy as np
+          import soundfile as sf
+          from scipy.signal import butter, sosfilt
+
+          root = Path("mantra_audio")
+          idx = int(os.environ["INDEX"])
+          with open(root / "verified_batch_01.json", encoding="utf-8") as f:
+              item = json.load(f)[idx]
+
+          out_dir = root / f"group0_single_{idx}"
+          out_dir.mkdir(exist_ok=True)
+
+          def safe(s):
+              return re.sub(r"[^A-Za-z0-9_-]+", "_", s).strip("_")
+
+          base = f'{item["id"]}_{safe(item["name"])}'
+          raw = out_dir / f"{base}_RAW.wav"
+          out = out_dir / f"{base}_SOFT_MUSIC.wav"
+
+          subprocess.run([
+              "cowchant", item["text"],
+              "--device", "cpu",
+              "--speed", "0.84",
+              "--seed", str(61 + idx),
+              "-o", str(raw),
+          ], check=True)
+
+          voice, sr = sf.read(raw, always_2d=True)
+          voice = voice.mean(axis=1)
+          n = len(voice)
+          t = np.arange(n)/sr
+          rootf = 146.83
+          drone = (
+              0.60*np.sin(2*np.pi*rootf*t) +
+              0.22*np.sin(2*np.pi*(rootf*1.5)*t) +
+              0.14*np.sin(2*np.pi*(rootf*2)*t) +
+              0.08*np.sin(2*np.pi*(rootf/2)*t)
+          )
+          pad = (
+              0.34*np.sin(2*np.pi*220.00*t + 0.3) +
+              0.22*np.sin(2*np.pi*293.66*t + 1.1) +
+              0.15*np.sin(2*np.pi*369.99*t + 2.0)
+          )
+          bg = (drone + 0.58*pad) * (0.74 + 0.26*np.sin(2*np.pi*0.05*t - 0.5))
+          sos = butter(4, 1150, btype="low", fs=sr, output="sos")
+          bg = sosfilt(sos, bg)
+          fade_n = max(1, int(sr*1.0))
+          fade = np.ones(n)
+          fade[:fade_n] = np.linspace(0,1,fade_n)
+          fade[-fade_n:] = np.linspace(1,0,fade_n)
+          bg *= fade
+          bg /= (np.max(np.abs(bg)) or 1.0)
+
+          voice /= (np.max(np.abs(voice)) or 1.0)
+          voice *= 0.78
+          mix = voice + 0.22*bg
+          peak = np.max(np.abs(mix)) or 1.0
+          if peak > 0.97:
+              mix = mix/peak*0.97
+          sf.write(out, mix, sr, subtype="PCM_16")
+          print(out)
+          PY
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanskrit-group0-single-${{ matrix.index }}
+          path: mantra_audio/group0_single_${{ matrix.index }}/*_SOFT_MUSIC.wav
+          retention-days: 7
