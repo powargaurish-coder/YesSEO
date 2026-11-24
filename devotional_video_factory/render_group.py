@@ -34,64 +34,27 @@ def license_ok(meta):
     if any(x in lic for x in ["noncommercial","no derivatives","nc","nd"]): return False
     return any(x in lic for x in ["public domain","cc0","cc by","creative commons"])
 
-def fetch_pool(deity,min_n=28):
-    d=CACHE/safe(deity); d.mkdir(parents=True,exist_ok=True)
-    meta_file=d/"pool.json"
-    if meta_file.exists():
-        pool=json.loads(meta_file.read_text(encoding="utf-8"))
-        if len(pool)>=14:return pool
-    seen=set(); pool=[]
-    api="https://commons.wikimedia.org/w/api.php"
-    headers={"User-Agent":"AnantaBhaktiVideoFactory/1.0 (educational devotional project)"}
-    for q in QUERIES[deity]:
-        params={
-          "action":"query","format":"json","generator":"search","gsrsearch":q,"gsrnamespace":6,"gsrlimit":50,
-          "prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":1600
-        }
-        try:r=requests.get(api,params=params,headers=headers,timeout=30); data=r.json()
-        except Exception:continue
-        for page in (data.get("query",{}).get("pages",{}) or {}).values():
-            ii=(page.get("imageinfo") or [{}])[0]; meta=ii.get("extmetadata",{}) or {}
-            url=ii.get("thumburl") or ii.get("url")
-            if not url or url in seen or not license_ok(meta):continue
-            title=page.get("title","")
-            lower=title.lower()
-            if any(x in lower for x in ["logo","map","diagram","text","icon","flag"]):continue
-            seen.add(url)
-            pool.append({
-              "url":url,"title":title,
-              "artist":(meta.get("Artist",{}).get("value","") or "")[:300],
-              "license":(meta.get("LicenseShortName",{}).get("value","") or ""),
-              "license_url":(meta.get("LicenseUrl",{}).get("value","") or ""),
-              "description_url":ii.get("descriptionurl","")
-            })
-            if len(pool)>=min_n:break
-        if len(pool)>=min_n:break
-    if len(pool)<9: raise RuntimeError(f"Only {len(pool)} reusable Commons images found for {deity}")
-    meta_file.write_text(json.dumps(pool,ensure_ascii=False,indent=2),encoding="utf-8")
+def fetch_pool(deity,min_n=9):
+    d=REPO_ROOT/"visual_assets"/safe(deity)
+    meta_file=d/"ATTRIBUTION.json"
+    if not meta_file.exists():
+        raise RuntimeError(f"Missing cached visual attribution for {deity}")
+    pool=json.loads(meta_file.read_text(encoding="utf-8"))
+    if len(pool)<min_n:
+        raise RuntimeError(f"Only {len(pool)} cached images for {deity}")
     return pool
 
 def download_selected(entry,pool,n=9):
-    vid_dir=CACHE/safe(entry["deity"])/entry["id"]; vid_dir.mkdir(parents=True,exist_ok=True)
+    d=REPO_ROOT/"visual_assets"/safe(entry["deity"])
+    files=sorted(d.glob("*.jpg"))
+    if len(files)<n:
+        raise RuntimeError(f"{entry['deity']} has only {len(files)} cached images")
     rnd=random.Random(int(hashlib.sha256(entry["id"].encode()).hexdigest()[:8],16))
-    selected=pool[:]
-    rnd.shuffle(selected); selected=selected[:min(n,len(selected))]
-    files=[]; used=[]
-    for i,item in enumerate(selected,1):
-        ext=".jpg"
-        p=vid_dir/f"{i:02d}{ext}"
-        if not p.exists():
-            rr=requests.get(item["url"],timeout=45,headers={"User-Agent":"AnantaBhaktiVideoFactory/1.0"})
-            rr.raise_for_status(); p.write_bytes(rr.content)
-        try:
-            im=Image.open(p).convert("RGB")
-            if im.width<500 or im.height<400: continue
-            im.thumbnail((2200,2200),Image.Resampling.LANCZOS); im.save(p,quality=91)
-            files.append(p); used.append(item)
-        except Exception:
-            p.unlink(missing_ok=True)
-    if len(files)<7: raise RuntimeError(f"{entry['id']} has only {len(files)} usable images")
-    return files,used
+    order=list(range(len(files)))
+    rnd.shuffle(order)
+    selected_files=[files[i] for i in order[:n]]
+    used=[pool[i] for i in order[:n]]
+    return selected_files,used
 
 def music_and_voice(entry,voice_path,out_path):
     voice,sr=sf.read(voice_path,always_2d=True); voice=voice.mean(axis=1).astype(np.float32)
