@@ -84,6 +84,52 @@ jobs:
             build_audio/source_report.json
           retention-days: 14
 
+  ganesha_first:
+    needs: audio
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-dejavu-core libsndfile1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install renderer packages
+        run: pip install -q numpy soundfile pillow requests
+
+      - name: Download shared audio masters
+        uses: actions/download-artifact@v4
+        with:
+          name: devotional-audio-100
+          path: build_audio
+
+      - name: Cache Ganesha visuals only
+        env:
+          DEITY_ONLY: Ganesha
+        run: python devotional_video_factory/prefetch_visuals.py
+
+      - name: Render first 10 Ganesha videos
+        env:
+          GROUP: 0
+        run: python devotional_video_factory/render_group.py
+
+      - name: Upload first 10 Ganesha videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ganesha-first-10-videos
+          path: rendered_videos/group_00/
+          if-no-files-found: warn
+          retention-days: 14
+
   visuals:
     runs-on: ubuntu-latest
     timeout-minutes: 90
