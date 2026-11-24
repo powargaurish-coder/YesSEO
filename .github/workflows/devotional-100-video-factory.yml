@@ -52,12 +52,18 @@ jobs:
         run: |
           python -m venv tts-venv
           tts-venv/bin/python -m pip install --upgrade pip
-          tts-venv/bin/pip install ninada indic-transliteration Unidecode
+          tts-venv/bin/pip install ninada numpy onnxruntime huggingface_hub indic-transliteration Unidecode
           tts-venv/bin/python - <<'PY'
           from ninada import Ninada
-          tts=Ninada(lang="sa")
+          tts=Ninada(lang="sa", voice="female")
+          p=tts._get_v4_studio_path("sa", voice="female")
+          if p is None:
+              raise RuntimeError("Female Sanskrit neural model was not resolved")
+          print("Female Sanskrit ONNX model:", p)
           wav=tts.speak("सत्यमेव जयते नानृतम्",lang="sa",voice="female")
-          print("Ninada Sanskrit female voice verified", len(wav))
+          if len(wav) < 10000:
+              raise RuntimeError("Female Sanskrit voice test produced unexpectedly short audio")
+          print("Ninada Sanskrit female neural voice verified", len(wav))
           PY
 
       - name: Resolve Sanskrit sources and generate female voice masters
