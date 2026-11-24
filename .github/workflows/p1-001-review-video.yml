@@ -1,0 +1,198 @@
+name: P1-001 Vakratunda Review Video
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [devotional-100-video-factory]
+    paths:
+      - ".github/workflows/p1-001-review-video.yml"
+      - "devotional_video_factory/P1_001_REVIEW_TRIGGER.txt"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core
+          pip install -q ninada numpy onnxruntime huggingface_hub pillow requests
+
+      - name: Render P1-001
+        run: |
+          python - <<'PY'
+          import json, time, requests, math, subprocess, os
+          from pathlib import Path
+          import numpy as np
+          from PIL import Image, ImageDraw, ImageFont
+          from ninada import Ninada
+          import wave
+
+          root=Path("p1_001_review")
+          imgdir=root/"images"
+          work=root/"work"
+          imgdir.mkdir(parents=True,exist_ok=True)
+          work.mkdir(parents=True,exist_ok=True)
+
+          # --- Female Sanskrit master ---
+          text="वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥"
+          tts=Ninada(lang="sa",voice="female")
+          wav=tts.speak(text,lang="sa",voice="female")
+          master=work/"master.wav"
+          master.write_bytes(wav)
+
+          # --- 11x + smooth music ---
+          # use ffmpeg concat for exact 11 repetitions
+          concat=work/"concat.txt"
+          concat.write_text("\n".join([f"file '{master.resolve()}'" for _ in range(11)]),encoding="utf-8")
+          voice11=work/"voice11.wav"
+          subprocess.run(["ffmpeg","-y","-loglevel","error","-f","concat","-safe","0","-i",str(concat),"-c:a","pcm_s16le",str(voice11)],check=True)
+
+          # continuous tanpura/pad/flute music
+          sr=44100
+          dur=float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=nw=1:nk=1",str(voice11)],text=True).strip())
+          n=int(sr*dur)
+          t=np.arange(n)/sr
+          rootf=146.83
+          bed=.34*np.sin(2*np.pi*rootf*t)+.14*np.sin(2*np.pi*rootf*1.5*t+.3)+.07*np.sin(2*np.pi*rootf*2*t+1.0)
+          bed+=.09*np.sin(2*np.pi*rootf*1.25*t+.2)+.06*np.sin(2*np.pi*rootf*1.6667*t+1.2)
+          mel=np.zeros(n)
+          ratios=[1,5/4,4/3,3/2,4/3,5/4]
+          pos=1.0;k=0
+          while pos<dur-1:
+              m=min(int(sr*2.4),n-int(pos*sr))
+              tt=np.arange(m)/sr
+              freq=rootf*2*ratios[k%len(ratios)]
+              ph=2*np.pi*freq*np.cumsum(1+.003*np.sin(2*np.pi*5*tt))/sr
+              sig=.075*np.sin(ph)+.018*np.sin(2*ph)
+              env=np.ones(m)
+              a=min(int(.25*sr),m//3);r=min(int(.45*sr),m//3)
+              if a: env[:a]=np.linspace(0,1,a)
+              if r: env[-r:]=np.linspace(1,0,r)
+              i=int(pos*sr);mel[i:i+m]+=sig*env
+              pos+=6.0;k+=1
+          bed+=mel
+          bed/=max(np.max(np.abs(bed)),1e-8)
+          music=work/"music.wav"
+          pcm=np.int16(np.clip(bed*.48,-1,1)*32767)
+          with wave.open(str(music),"w") as wf:
+              wf.setnchannels(1);wf.setsampwidth(2);wf.setframerate(sr);wf.writeframes(pcm.tobytes())
+          mixed=work/"mixed.wav"
+          subprocess.run([
+              "ffmpeg","-y","-loglevel","error","-i",str(voice11),"-stream_loop","-1","-i",str(music),
+              "-filter_complex","[0:a]volume=0.92,aecho=0.8:0.88:90|180:0.06|0.03[v];[1:a]volume=0.32[m];[v][m]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]",
+              "-map","[a]","-c:a","pcm_s16le",str(mixed)
+          ],check=True)
+
+          # --- Fetch 9 Ganesha visuals serially ---
+          api="https://commons.wikimedia.org/w/api.php"
+          headers={"User-Agent":"AnantaBhaktiReview/1.0 (GitHub powargaurish-coder)"}
+          queries=["Ganesha painting","Ganesha sculpture India","Ganesha temple","Ganesha Bali","Ganesha Thailand"]
+          candidates=[];seen=set()
+          for q in queries:
+              params={"action":"query","format":"json","generator":"search","gsrsearch":q,"gsrnamespace":6,"gsrlimit":25,
+                      "prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":1200}
+              for attempt in range(8):
+                  r=requests.get(api,params=params,headers=headers,timeout=40)
+                  if r.status_code==429:
+                      time.sleep(6*(attempt+1));continue
+                  r.raise_for_status();break
+              data=r.json()
+              for page in (data.get("query",{}).get("pages",{}) or {}).values():
+                  ii=(page.get("imageinfo") or [{}])[0]
+                  meta=ii.get("extmetadata",{}) or {}
+                  lic=(meta.get("LicenseShortName",{}).get("value","") or "").lower()
+                  if not any(x in lic for x in ["public domain","cc0","cc by","creative commons"]): continue
+                  if any(x in lic for x in ["noncommercial","no derivatives"]): continue
+                  url=ii.get("thumburl") or ii.get("url")
+                  if not url or url in seen: continue
+                  seen.add(url)
+                  candidates.append((url,page.get("title",""),lic,ii.get("descriptionurl","")))
+              if len(candidates)>=16: break
+              time.sleep(2)
+
+          used=[]
+          for url,title,lic,desc in candidates:
+              if len(used)>=9: break
+              for attempt in range(8):
+                  rr=requests.get(url,headers=headers,timeout=50)
+                  if rr.status_code==429:
+                      time.sleep(7*(attempt+1));continue
+                  rr.raise_for_status();break
+              p=imgdir/f"{len(used)+1:02d}.jpg"
+              p.write_bytes(rr.content)
+              try:
+                  im=Image.open(p).convert("RGB")
+                  if im.width<500 or im.height<400:
+                      p.unlink(missing_ok=True);continue
+                  im.thumbnail((1800,1800),Image.Resampling.LANCZOS)
+                  im.save(p,quality=90)
+                  used.append({"title":title,"license":lic,"source":desc})
+              except Exception:
+                  p.unlink(missing_ok=True);continue
+              time.sleep(3)
+
+          if len(used)<7:
+              raise RuntimeError(f"Only {len(used)} usable Ganesha images downloaded")
+
+          imgs=sorted(imgdir.glob("*.jpg"))[:9]
+          # --- slideshow with gentle zoom / crossfade ---
+          fps=12;fade=.75
+          audio_dur=float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=nw=1:nk=1",str(mixed)],text=True).strip())
+          per=(audio_dur+(len(imgs)-1)*fade)/len(imgs)
+          clips=[]
+          for idx,p in enumerate(imgs):
+              clip=work/f"clip_{idx:02d}.mp4";clips.append(clip)
+              frames=max(30,int(round(per*fps)))
+              z="min(zoom+0.00065,1.09)" if idx%2==0 else "if(eq(on,1),1.09,max(zoom-0.00065,1.0))"
+              vf=f"scale=2560:1440:force_original_aspect_ratio=increase,crop=2560:1440,zoompan=z='{z}':x='iw/2-(iw/zoom/2)+sin(on/35)*5':y='ih/2-(ih/zoom/2)+cos(on/42)*4':d={frames}:s=1280x720:fps={fps},format=yuv420p"
+              subprocess.run(["ffmpeg","-y","-loglevel","error","-loop","1","-i",str(p),"-vf",vf,"-t",f"{per:.3f}","-an","-c:v","libx264","-preset","veryfast","-crf","26",str(clip)],check=True)
+
+          cmd=["ffmpeg","-y","-loglevel","error"]
+          for c in clips:cmd+=["-i",str(c)]
+          fc=[];last="[0:v]";offset=per-fade
+          for i in range(1,len(clips)):
+              out=f"[v{i}]";fc.append(f"{last}[{i}:v]xfade=transition=fade:duration={fade}:offset={offset:.3f}{out}");last=out;offset+=per-fade
+          base=work/"base.mp4"
+          cmd+=["-filter_complex",";".join(fc),"-map",last,"-c:v","libx264","-preset","veryfast","-crf","26","-pix_fmt","yuv420p",str(base)]
+          subprocess.run(cmd,check=True)
+
+          # text overlay: Sanskrit + English transliteration + meaning
+          W,H=1280,720
+          overlay=Image.new("RGBA",(W,H),(0,0,0,0));d=ImageDraw.Draw(overlay,"RGBA")
+          dev="/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf"
+          eng="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+          devf=ImageFont.truetype(dev,38) if os.path.exists(dev) else ImageFont.load_default()
+          engf=ImageFont.truetype(eng,23)
+          small=ImageFont.truetype(eng,18)
+          d.rounded_rectangle([28,472,1252,698],radius=20,fill=(0,0,0,145))
+          d.text((50,490),"वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।",font=devf,fill=(255,255,255,248))
+          d.text((50,538),"निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥",font=devf,fill=(255,255,255,248))
+          d.text((50,590),"Vakratunda Mahakaya Suryakoti Samaprabha, Nirvighnam Kuru Me Deva Sarva-Kaaryeshu Sarvada.",font=engf,fill=(230,238,255,240))
+          d.text((50,632),"Meaning: O Lord Ganesha, remover of obstacles, bless all my endeavours and keep them free from difficulties.",font=small,fill=(235,225,205,235))
+          over=work/"overlay.png";overlay.save(over)
+
+          out=root/"P1-001_Vakratunda_Mahakaya_11X_FINAL_REVIEW.mp4"
+          subprocess.run(["ffmpeg","-y","-loglevel","error","-i",str(base),"-loop","1","-i",str(over),"-i",str(mixed),
+                          "-filter_complex","[0:v][1:v]overlay=0:0:shortest=1[v]","-map","[v]","-map","2:a",
+                          "-c:v","libx264","-preset","veryfast","-crf","24","-c:a","aac","-b:a","160k","-pix_fmt","yuv420p",
+                          "-shortest","-movflags","+faststart",str(out)],check=True)
+          (root/"ATTRIBUTION.json").write_text(json.dumps(used,ensure_ascii=False,indent=2),encoding="utf-8")
+          print(out)
+          PY
+
+      - name: Upload review video
+        uses: actions/upload-artifact@v4
+        with:
+          name: P1-001-Vakratunda-11X-Final-Review
+          path: |
+            p1_001_review/P1-001_Vakratunda_Mahakaya_11X_FINAL_REVIEW.mp4
+            p1_001_review/ATTRIBUTION.json
+          retention-days: 14
