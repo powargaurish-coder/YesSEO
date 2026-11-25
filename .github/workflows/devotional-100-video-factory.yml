@@ -5,7 +5,11 @@ on:
   push:
     branches: [devotional-100-video-factory]
     paths:
-      - "devotional_video_factory/**"
+      - "devotional_video_factory/manifest_100.json"
+      - "devotional_video_factory/prepare_audio.py"
+      - "devotional_video_factory/render_group.py"
+      - "devotional_video_factory/prefetch_visuals.py"
+      - "devotional_video_factory/FINAL_BATCH_TRIGGER.txt"
       - ".github/workflows/devotional-100-video-factory.yml"
 
 permissions:
@@ -13,7 +17,7 @@ permissions:
 
 concurrency:
   group: devotional-100-video-factory
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   audio:
