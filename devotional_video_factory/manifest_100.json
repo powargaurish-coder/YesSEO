@@ -6,7 +6,10 @@
     "type": "sloka",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-002",
@@ -15,7 +18,10 @@
     "type": "mantra",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-003",
@@ -24,7 +30,10 @@
     "type": "upanishadic hymn",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-004",
@@ -33,7 +42,10 @@
     "type": "stotra",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-005",
@@ -42,7 +54,10 @@
     "type": "ashtakam",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-006",
@@ -51,7 +66,10 @@
     "type": "stotra",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-007",
@@ -60,7 +78,10 @@
     "type": "stotra",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-008",
@@ -69,7 +90,10 @@
     "type": "stotra",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-009",
@@ -78,7 +102,10 @@
     "type": "kavacha",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-010",
@@ -87,7 +114,10 @@
     "type": "ashtakam",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-011",
@@ -96,7 +126,10 @@
     "type": "morning prayer",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-012",
@@ -105,7 +138,10 @@
     "type": "namavali",
     "repetitions": 11,
     "images_per_video": 9,
-    "format": "16:9"
+    "format": "16:9",
+    "visual_source": "approved_ganesha_only",
+    "visual_policy": "Use only user-approved premium Ganesha temple/Bali/Thai/childlike devotional images. No Wikimedia, no generic paintings, no stock substitutes.",
+    "fallback_allowed": false
   },
   {
     "id": "P1-013",
