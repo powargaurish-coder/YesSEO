@@ -1,0 +1,80 @@
+name: Remaining Devotional Videos by Deity
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [devotional-100-video-factory]
+    paths:
+      - "devotional_video_factory/render_deity.py"
+      - "devotional_video_factory/REMAINING_BATCH_TRIGGER.txt"
+      - ".github/workflows/remaining-devotional-videos.yml"
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - deity: Ganesha
+            skip_ids: "P1-001,P1-002,P1-003,P1-004,P1-005,P1-006,P1-007,P1-008,P1-009,P1-010"
+          - deity: Shiva
+            skip_ids: ""
+          - deity: Vishnu
+            skip_ids: ""
+          - deity: Krishna
+            skip_ids: ""
+          - deity: Rama
+            skip_ids: ""
+          - deity: Hanuman
+            skip_ids: ""
+          - deity: Durga
+            skip_ids: ""
+          - deity: Lakshmi
+            skip_ids: ""
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-dejavu-core libsndfile1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install renderer packages
+        run: pip install -q numpy soundfile pillow requests
+
+      - name: Download completed 100-audio artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: devotional-audio-100
+          path: build_audio
+          github-token: \${{ secrets.GITHUB_TOKEN }}
+          run-id: 45525200867
+
+      - name: Render deity batch
+        env:
+          DEITY: \${{ matrix.deity }}
+          SKIP_IDS: \${{ matrix.skip_ids }}
+        run: python devotional_video_factory/render_deity.py
+
+      - name: Upload deity videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devotional-\${{ matrix.deity }}-videos
+          path: rendered_deity/\${{ matrix.deity }}/
+          if-no-files-found: warn
+          retention-days: 14
