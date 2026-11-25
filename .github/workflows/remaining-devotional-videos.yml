@@ -6,15 +6,57 @@ on:
     branches: [devotional-100-video-factory]
     paths:
       - "devotional_video_factory/render_deity.py"
-      - "devotional_video_factory/REMAINING_BATCH_TRIGGER.txt"
+      - "devotional_video_factory/prepare_audio.py"
+      - "devotional_video_factory/REMAINING_BATCH_TRIGGER_V2.txt"
       - ".github/workflows/remaining-devotional-videos.yml"
 
 permissions:
-  actions: read
   contents: read
 
 jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libsndfile1 ffmpeg
+
+      - name: Clone source repositories
+        run: |
+          mkdir -p source_texts
+          git clone --depth 1 https://github.com/stotrasamhita/stotra-sangrahah.git source_texts/stotra-sangrahah
+          git clone --depth 1 https://github.com/stotrasamhita/vedamantra-book.git source_texts/vedamantra-book
+          git clone --depth 1 https://github.com/stotrasamhita/namavali-manjari.git source_texts/namavali-manjari
+          git clone --depth 1 https://github.com/kaustubhk24/sangrah.git source_texts/sangrah
+
+      - name: Install Sanskrit female TTS
+        run: |
+          python -m venv tts-venv
+          tts-venv/bin/python -m pip install --upgrade pip
+          tts-venv/bin/pip install ninada numpy onnxruntime huggingface_hub indic-transliteration Unidecode
+
+      - name: Prepare audio masters
+        run: tts-venv/bin/python devotional_video_factory/prepare_audio.py
+
+      - name: Upload audio for this run
+        uses: actions/upload-artifact@v4
+        with:
+          name: devotional-audio-current-run
+          path: build_audio/
+          retention-days: 7
+
   render:
+    needs: audio
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
@@ -56,25 +98,23 @@ jobs:
       - name: Install renderer packages
         run: pip install -q numpy soundfile pillow requests
 
-      - name: Download completed 100-audio artifact
+      - name: Download audio from this run
         uses: actions/download-artifact@v4
         with:
-          name: devotional-audio-100
+          name: devotional-audio-current-run
           path: build_audio
-          github-token: \${{ secrets.GITHUB_TOKEN }}
-          run-id: 45525200867
 
       - name: Render deity batch
         env:
-          DEITY: \${{ matrix.deity }}
-          SKIP_IDS: \${{ matrix.skip_ids }}
+          DEITY: ${{ matrix.deity }}
+          SKIP_IDS: ${{ matrix.skip_ids }}
         run: python devotional_video_factory/render_deity.py
 
       - name: Upload deity videos
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: devotional-\${{ matrix.deity }}-videos
-          path: rendered_deity/\${{ matrix.deity }}/
+          name: devotional-${{ matrix.deity }}-videos
+          path: rendered_deity/${{ matrix.deity }}/
           if-no-files-found: warn
           retention-days: 14
