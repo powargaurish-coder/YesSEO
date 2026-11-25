@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-import os, json, time, requests, random, hashlib, shutil
+import os, json, time, requests, random, hashlib, shutil, sys
 from pathlib import Path
-import devotional_video_factory.render_group as rg
 
-REPO=Path(__file__).resolve().parent.parent
+HERE=Path(__file__).resolve().parent
+REPO=HERE.parent
+sys.path.insert(0,str(HERE))
+import render_group as rg
 BUILD=REPO/"build_audio"
 OUTROOT=REPO/"rendered_deity"
 VIS=REPO/"visual_assets"
