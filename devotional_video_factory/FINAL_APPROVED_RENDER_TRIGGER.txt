@@ -1,0 +1,1 @@
+Final approved-only 100-video render trigger — use locked premium visual manifest only.
