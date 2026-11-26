@@ -1,0 +1,84 @@
+name: FINAL Approved Render Only
+
+on:
+  push:
+    branches: [devotional-100-video-factory]
+    paths:
+      - "devotional_video_factory/FINAL_RENDER_ONLY_TRIGGER.txt"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: final-approved-render-only
+  cancel-in-progress: false
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        group: [0,1,2,3,4,5,6,7,8,9]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-dejavu-core libsndfile1 unzip curl
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install renderer packages
+        run: pip install -q numpy soundfile pillow requests
+      - name: Download existing completed audio masters
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p build_audio
+          curl -fL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/powargaurish-coder/YesSEO/actions/artifacts/15059817783/zip -o audio.zip
+          unzip -q audio.zip -d build_audio
+          test -f build_audio/audio_manifest.json
+          test -d build_audio/audio
+      - name: Render approved-only group
+        env:
+          GROUP: ${{ matrix.group }}
+        run: python devotional_video_factory/render_approved_group.py
+      - name: Upload approved group
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-approved-group-${{ matrix.group }}
+          path: approved_final_videos/group_*/
+          if-no-files-found: warn
+          retention-days: 14
+
+  package:
+    needs: video
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download approved groups
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "final-approved-group-*"
+          path: final_approved_100
+          merge-multiple: true
+      - name: Validate final count
+        run: |
+          COUNT=$(find final_approved_100 -type f -name "*_FINAL_APPROVED.mp4" | wc -l)
+          echo "Final approved video count: $COUNT"
+          test "$COUNT" -eq 100
+      - name: Package final videos
+        run: |
+          cd final_approved_100
+          zip -0 -r ../FINAL_100_APPROVED_DEVOTIONAL_VIDEOS.zip .
+      - name: Upload final package
+        uses: actions/upload-artifact@v4
+        with:
+          name: FINAL-100-APPROVED-DEVOTIONAL-VIDEOS
+          path: FINAL_100_APPROVED_DEVOTIONAL_VIDEOS.zip
+          retention-days: 14
