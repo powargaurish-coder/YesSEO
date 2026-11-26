@@ -1,0 +1,113 @@
+name: FINAL Approved 100 Devotional Videos
+
+on:
+  push:
+    branches: [devotional-100-video-factory]
+    paths:
+      - "devotional_video_factory/FINAL_APPROVED_RENDER_TRIGGER.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: final-approved-100-videos
+  cancel-in-progress: false
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libsndfile1 ffmpeg
+      - name: Clone source repositories
+        run: |
+          mkdir -p source_texts
+          git clone --depth 1 https://github.com/stotrasamhita/stotra-sangrahah.git source_texts/stotra-sangrahah
+          git clone --depth 1 https://github.com/stotrasamhita/vedamantra-book.git source_texts/vedamantra-book
+          git clone --depth 1 https://github.com/stotrasamhita/namavali-manjari.git source_texts/namavali-manjari
+          git clone --depth 1 https://github.com/kaustubhk24/sangrah.git source_texts/sangrah
+      - name: Install female Sanskrit TTS
+        run: |
+          python -m venv tts-venv
+          tts-venv/bin/python -m pip install --upgrade pip
+          tts-venv/bin/pip install ninada numpy onnxruntime huggingface_hub indic-transliteration Unidecode
+      - name: Prepare masters
+        run: tts-venv/bin/python devotional_video_factory/prepare_audio.py
+      - name: Upload current audio payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-render-audio
+          path: build_audio/
+          retention-days: 7
+
+  video:
+    needs: audio
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        group: [0,1,2,3,4,5,6,7,8,9]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-dejavu-core libsndfile1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install renderer packages
+        run: pip install -q numpy soundfile pillow requests
+      - name: Download audio from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: approved-render-audio
+          path: build_audio
+      - name: Render approved-only group
+        env:
+          GROUP: ${{ matrix.group }}
+        run: python devotional_video_factory/render_approved_group.py
+      - name: Upload approved group
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-videos-group-${{ matrix.group }}
+          path: approved_final_videos/group_*/
+          if-no-files-found: warn
+          retention-days: 14
+
+  package:
+    needs: video
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all approved video groups
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "approved-videos-group-*"
+          path: final_approved_100
+          merge-multiple: true
+      - name: Count and validate final videos
+        run: |
+          COUNT=$(find final_approved_100 -type f -name "*_FINAL_APPROVED.mp4" | wc -l)
+          echo "Final approved video count: $COUNT"
+          test "$COUNT" -eq 100
+      - name: Build final package
+        run: |
+          cd final_approved_100
+          zip -0 -r ../FINAL_100_APPROVED_DEVOTIONAL_VIDEOS.zip .
+      - name: Upload final 100-video package
+        uses: actions/upload-artifact@v4
+        with:
+          name: FINAL-100-APPROVED-DEVOTIONAL-VIDEOS
+          path: FINAL_100_APPROVED_DEVOTIONAL_VIDEOS.zip
+          retention-days: 14
