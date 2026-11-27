@@ -1,0 +1,86 @@
+name: FINAL Remaining 17 Devotional Videos
+
+on:
+  push:
+    branches: [devotional-100-video-factory]
+    paths:
+      - "devotional_video_factory/FINAL_REMAINING17_TRIGGER.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: final-remaining-17
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libsndfile1 ffmpeg
+      - name: Clone verified Sanskrit sources
+        run: |
+          mkdir -p source_texts
+          git clone --depth 1 https://github.com/stotrasamhita/stotra-sangrahah.git source_texts/stotra-sangrahah
+          git clone --depth 1 https://github.com/stotrasamhita/vedamantra-book.git source_texts/vedamantra-book
+          git clone --depth 1 https://github.com/stotrasamhita/namavali-manjari.git source_texts/namavali-manjari
+          git clone --depth 1 https://github.com/kaustubhk24/sangrah.git source_texts/sangrah
+      - name: Install Sanskrit female TTS
+        run: |
+          python -m venv tts-venv
+          tts-venv/bin/python -m pip install --upgrade pip
+          tts-venv/bin/pip install ninada numpy onnxruntime huggingface_hub indic-transliteration Unidecode
+      - name: Prepare complete source/audio manifest
+        run: tts-venv/bin/python devotional_video_factory/prepare_audio.py
+      - name: Validate all 100 entries resolved
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open("build_audio/audio_manifest.json"))
+          print("resolved",len(x))
+          assert len(x)==100, len(x)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final17-audio-payload
+          path: build_audio/
+          retention-days: 7
+
+  render17:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-dejavu-core libsndfile1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q numpy soundfile pillow requests
+      - uses: actions/download-artifact@v4
+        with:
+          name: final17-audio-payload
+          path: build_audio
+      - name: Render exactly remaining 17
+        run: python devotional_video_factory/render_remaining17.py
+      - name: Validate exactly 17 final videos
+        run: |
+          COUNT=$(find final_remaining17 -type f -name "*_FINAL_APPROVED.mp4" | wc -l)
+          echo "Final remaining videos: $COUNT"
+          test "$COUNT" -eq 17
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FINAL-17-COMPLETED-VIDEOS
+          path: final_remaining17/
+          retention-days: 14
